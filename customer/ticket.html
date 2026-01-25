@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Details - Scottship Solutions Support</title>
+    <link rel="stylesheet" href="../shared/css/common.css">
+    <link rel="stylesheet" href="css/customer.css">
+</head>
+<body class="portal-layout">
+    <header class="portal-header">
+        <div class="portal-header-left">
+            <a href="dashboard.html" class="portal-logo">Scottship Solutions</a>
+            <nav class="portal-nav">
+                <a href="dashboard.html" class="active">My Tickets</a>
+                <a href="new-ticket.html">New Ticket</a>
+                <a href="knowledge-base.html">Help Center</a>
+                <a href="profile.html">Profile</a>
+            </nav>
+        </div>
+        <div class="portal-header-right">
+            <div class="user-menu">
+                <div class="user-avatar" id="userAvatar">--</div>
+                <span id="userName">Loading...</span>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="logout()">Sign Out</button>
+        </div>
+    </header>
+
+    <main class="portal-main">
+        <div class="page-header">
+            <a href="dashboard.html" class="btn btn-secondary btn-sm">← Back to Tickets</a>
+        </div>
+
+        <div id="ticketContent">
+            <div class="empty-state">
+                <div class="spinner"></div>
+                <p>Loading ticket...</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="../shared/js/api.js"></script>
+    <script src="js/customer.js"></script>
+    <script>
+        // Check auth and get user info
+        const session = requireAuth('customer');
+        if (session) {
+            document.getElementById('userName').textContent = session.user.contact_name;
+            document.getElementById('userAvatar').textContent = getInitials(session.user.contact_name);
+            loadTicket();
+        }
+
+        function getTicketId() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id');
+        }
+
+        async function loadTicket() {
+            const ticketId = getTicketId();
+            if (!ticketId) {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            try {
+                // For demo, use mock data
+                const ticket = getMockTicket(ticketId);
+                if (!ticket) {
+                    document.getElementById('ticketContent').innerHTML = `
+                        <div class="empty-state">
+                            <h3>Ticket not found</h3>
+                            <a href="dashboard.html" class="btn btn-primary mt-lg">Back to Tickets</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                renderTicket(ticket);
+            } catch (error) {
+                console.error('Error loading ticket:', error);
+                document.getElementById('ticketContent').innerHTML = `
+                    <div class="empty-state">
+                        <p>Unable to load ticket. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderTicket(ticket) {
+            const container = document.getElementById('ticketContent');
+            const canReply = ticket.status !== 'closed';
+
+            container.innerHTML = `
+                <div class="ticket-detail-header">
+                    <div class="flex items-center gap-md mb-md">
+                        <span class="ticket-id">${ticket.ticket_number}</span>
+                        <span class="badge ${getStatusClass(ticket.status)}">${getStatusLabel(ticket.status)}</span>
+                    </div>
+                    <h1 class="ticket-detail-title">${escapeHtml(ticket.subject)}</h1>
+                    <div class="ticket-detail-meta">
+                        <div class="ticket-detail-meta-item">
+                            <span class="priority-dot ${ticket.priority}"></span>
+                            ${getPriorityLabel(ticket.priority)} Priority
+                        </div>
+                        <div class="ticket-detail-meta-item">
+                            Category: ${ticket.category || 'General'}
+                        </div>
+                        <div class="ticket-detail-meta-item">
+                            Created: ${formatDateTime(ticket.created_at)}
+                        </div>
+                        ${ticket.assigned_to ? `
+                            <div class="ticket-detail-meta-item">
+                                Assigned to: ${ticket.assigned_to_name}
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+
+                <div class="conversation">
+                    <div class="conversation-header">
+                        Conversation
+                    </div>
+
+                    ${ticket.messages.map(msg => `
+                        <div class="message">
+                            <div class="message-header">
+                                <div class="message-author">
+                                    <div class="message-avatar ${msg.author_type}">${getInitials(msg.author_name)}</div>
+                                    <div>
+                                        <div class="message-name">${escapeHtml(msg.author_name)}</div>
+                                        <div class="message-role">${msg.author_type === 'customer' ? 'You' : 'Support Team'}</div>
+                                    </div>
+                                </div>
+                                <div class="message-time">${formatDateTime(msg.created_at)}</div>
+                            </div>
+                            <div class="message-content">${escapeHtml(msg.content)}</div>
+                        </div>
+                    `).join('')}
+
+                    ${canReply ? `
+                        <div class="reply-form">
+                            <form id="replyForm">
+                                <textarea id="replyContent" class="form-textarea" rows="4"
+                                          placeholder="Type your reply here..."></textarea>
+                                <div class="reply-form-actions">
+                                    <button type="submit" class="btn btn-primary" id="replyBtn">
+                                        <span class="btn-text">Send Reply</span>
+                                        <span class="btn-loading hidden"><span class="spinner"></span></span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    ` : `
+                        <div class="reply-form" style="text-align: center;">
+                            <p class="text-muted">This ticket is closed. Create a new ticket if you need additional help.</p>
+                        </div>
+                    `}
+                </div>
+            `;
+
+            // Add reply form handler
+            const replyForm = document.getElementById('replyForm');
+            if (replyForm) {
+                replyForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+
+                    const content = document.getElementById('replyContent').value.trim();
+                    if (!content) return;
+
+                    const replyBtn = document.getElementById('replyBtn');
+                    replyBtn.disabled = true;
+                    replyBtn.querySelector('.btn-text').classList.add('hidden');
+                    replyBtn.querySelector('.btn-loading').classList.remove('hidden');
+
+                    try {
+                        // For demo, simulate API call
+                        await new Promise(resolve => setTimeout(resolve, 500));
+
+                        // Add message to UI
+                        const newMessage = {
+                            author_type: 'customer',
+                            author_name: session.user.contact_name,
+                            content: content,
+                            created_at: new Date().toISOString(),
+                        };
+
+                        ticket.messages.push(newMessage);
+                        renderTicket(ticket);
+                    } catch (error) {
+                        alert('Unable to send reply. Please try again.');
+                    } finally {
+                        replyBtn.disabled = false;
+                        replyBtn.querySelector('.btn-text').classList.remove('hidden');
+                        replyBtn.querySelector('.btn-loading').classList.add('hidden');
+                    }
+                });
+            }
+        }
+
+        function logout() {
+            api.clearSession();
+            window.location.href = 'login.html';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Mock data
+        function getMockTicket(id) {
+            const tickets = {
+                '1': {
+                    id: 1,
+                    ticket_number: 'TKT-000001',
+                    subject: 'Cannot connect to VPN from home',
+                    description: 'I am unable to connect to the company VPN from my home network. I get an error message saying "Connection timed out" after about 30 seconds of trying to connect.',
+                    status: 'in_progress',
+                    priority: 'high',
+                    category: 'Network',
+                    created_at: new Date(Date.now() - 2 * 3600000).toISOString(),
+                    assigned_to: 1,
+                    assigned_to_name: 'John Smith',
+                    messages: [
+                        {
+                            author_type: 'customer',
+                            author_name: session.user.contact_name,
+                            content: 'I am unable to connect to the company VPN from my home network. I get an error message saying "Connection timed out" after about 30 seconds of trying to connect.\n\nI have tried restarting my router and my computer but the issue persists.',
+                            created_at: new Date(Date.now() - 2 * 3600000).toISOString(),
+                        },
+                        {
+                            author_type: 'team',
+                            author_name: 'John Smith',
+                            content: 'Hi there,\n\nThank you for reaching out. I\'m looking into this issue now. Can you please confirm which VPN client you are using and what version it is?\n\nAlso, are you able to access other websites normally from your home network?\n\nBest regards,\nJohn',
+                            created_at: new Date(Date.now() - 1 * 3600000).toISOString(),
+                        },
+                    ],
+                },
+                '2': {
+                    id: 2,
+                    ticket_number: 'TKT-000002',
+                    subject: 'Need password reset for email account',
+                    status: 'open',
+                    priority: 'medium',
+                    category: 'Email',
+                    created_at: new Date(Date.now() - 24 * 3600000).toISOString(),
+                    messages: [
+                        {
+                            author_type: 'customer',
+                            author_name: session.user.contact_name,
+                            content: 'I forgot my email password and the self-service reset is not working. Can you please help me reset it?',
+                            created_at: new Date(Date.now() - 24 * 3600000).toISOString(),
+                        },
+                    ],
+                },
+            };
+
+            return tickets[id];
+        }
+    </script>
+</body>
+</html>

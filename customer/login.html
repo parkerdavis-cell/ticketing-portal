@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Login - Scottship Solutions Support</title>
+    <link rel="stylesheet" href="../shared/css/common.css">
+    <link rel="stylesheet" href="css/customer.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <a href="../index.html" class="auth-logo">Scottship Solutions</a>
+                <h1>Customer Portal</h1>
+                <p class="text-muted">Sign in to access your support tickets</p>
+            </div>
+
+            <form id="loginForm" class="auth-form">
+                <div id="alertContainer"></div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-input" required autocomplete="email" placeholder="you@company.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" name="password" class="form-input" required autocomplete="current-password" placeholder="Enter your password">
+                </div>
+
+                <div class="form-group flex justify-between items-center">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="remember" name="remember">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="forgot-password.html" class="text-sm">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                    <span class="btn-text">Sign In</span>
+                    <span class="btn-loading hidden"><span class="spinner"></span></span>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p class="text-sm text-muted">
+                    Need an account? Contact Scottship Solutions to get started.
+                </p>
+                <p class="text-sm text-muted mt-md">
+                    Or email us directly at <a href="mailto:support@scottshipsolutions.com">support@scottshipsolutions.com</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="../shared/js/api.js"></script>
+    <script src="js/customer.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const alertContainer = document.getElementById('alertContainer');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.querySelector('.btn-text').classList.add('hidden');
+            submitBtn.querySelector('.btn-loading').classList.remove('hidden');
+            alertContainer.innerHTML = '';
+
+            try {
+                const response = await api.login('customer', email, password);
+
+                if (response.success) {
+                    // Store session and redirect
+                    localStorage.setItem('customerSession', JSON.stringify(response.data));
+                    window.location.href = 'dashboard.html';
+                } else {
+                    showAlert(alertContainer, 'error', response.message || 'Invalid email or password');
+                }
+            } catch (error) {
+                showAlert(alertContainer, 'error', 'Unable to connect. Please try again.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.querySelector('.btn-text').classList.remove('hidden');
+                submitBtn.querySelector('.btn-loading').classList.add('hidden');
+            }
+        });
+
+        function showAlert(container, type, message) {
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+        }
+    </script>
+</body>
+</html>

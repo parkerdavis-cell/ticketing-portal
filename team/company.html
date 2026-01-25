@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Details - Team Portal - Scottship Solutions</title>
+    <link rel="stylesheet" href="../shared/css/common.css">
+    <link rel="stylesheet" href="css/team.css">
+    <style>
+        .company-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: var(--spacing-xl);
+        }
+        @media (max-width: 1024px) {
+            .company-detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .info-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            margin-bottom: var(--spacing-lg);
+        }
+        .info-card-header {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--gray-100);
+            font-weight: 600;
+        }
+        .info-card-body {
+            padding: var(--spacing-lg);
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px solid var(--gray-50);
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+        .info-value {
+            font-weight: 500;
+        }
+        .user-list-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--gray-100);
+        }
+        .user-list-item:last-child {
+            border-bottom: none;
+        }
+        .user-list-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .user-list-info {
+            flex: 1;
+        }
+        .user-list-name {
+            font-weight: 600;
+        }
+        .user-list-role {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+    </style>
+</head>
+<body>
+    <div class="team-layout">
+        <aside class="team-sidebar">
+            <div class="sidebar-header">
+                <a href="dashboard.html" class="sidebar-logo">Scottship Solutions</a>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        Dashboard
+                    </a>
+                    <a href="tickets.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path></svg>
+                        All Tickets
+                    </a>
+                    <a href="knowledge-base.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                        Knowledge Base
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Management</div>
+                    <a href="customers.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                        Customers
+                    </a>
+                    <a href="reports.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        Reports
+                    </a>
+                    <a href="settings.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle></svg>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="sidebarAvatar">--</div>
+                    <div class="user-details">
+                        <div class="user-name" id="sidebarName">Loading...</div>
+                        <div class="user-role" id="sidebarRole">Team Member</div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm mt-md" style="width: 100%;" onclick="logout()">Sign Out</button>
+            </div>
+        </aside>
+
+        <main class="team-main">
+            <header class="team-header">
+                <div class="team-header-left">
+                    <a href="customers.html" class="btn btn-secondary btn-sm">← Back to Customers</a>
+                </div>
+                <div class="team-header-right" id="headerActions"></div>
+            </header>
+
+            <div class="team-content" id="companyContent">
+                <div class="empty-state">
+                    <div class="spinner"></div>
+                    <p>Loading company...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../shared/js/api.js"></script>
+    <script>
+        const session = requireAuth('team');
+        if (session) {
+            document.getElementById('sidebarName').textContent = session.user.name;
+            document.getElementById('sidebarAvatar').textContent = getInitials(session.user.name);
+            document.getElementById('sidebarRole').textContent = session.user.role === 'admin' ? 'Administrator' : 'Technician';
+            loadCompany();
+        }
+
+        let currentCompany = null;
+
+        function getCompanyId() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id');
+        }
+
+        async function loadCompany() {
+            const companyId = getCompanyId();
+            if (!companyId) {
+                window.location.href = 'customers.html';
+                return;
+            }
+
+            try {
+                const [companyRes, ticketsRes] = await Promise.all([
+                    api.getCompany(companyId),
+                    api.getTickets({ company_id: companyId })
+                ]);
+
+                if (companyRes.success) {
+                    currentCompany = companyRes.data;
+                    const tickets = ticketsRes.success ? ticketsRes.data : [];
+                    renderCompany(tickets);
+                } else {
+                    document.getElementById('companyContent').innerHTML = `
+                        <div class="empty-state">
+                            <h3>Company not found</h3>
+                            <a href="customers.html" class="btn btn-primary mt-lg">Back to Customers</a>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading company:', error);
+            }
+        }
+
+        function renderCompany(tickets) {
+            const co = currentCompany;
+            const container = document.getElementById('companyContent');
+
+            // Header actions
+            document.getElementById('headerActions').innerHTML = `
+                <button class="btn btn-primary" onclick="viewReports()">View Reports</button>
+            `;
+
+            container.innerHTML = `
+                <div style="margin-bottom: var(--spacing-lg);">
+                    <h1 style="margin-bottom: var(--spacing-xs);">${escapeHtml(co.name)}</h1>
+                    <span class="text-muted">${co.industry || 'No industry specified'}</span>
+                </div>
+
+                <div class="company-detail-grid">
+                    <div class="company-main">
+                        <!-- Recent Tickets -->
+                        <div class="info-card">
+                            <div class="info-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>Recent Tickets</span>
+                                <span class="badge badge-open">${co.open_tickets} open</span>
+                            </div>
+                            <div class="table-container">
+                                <table class="customers-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Ticket</th>
+                                            <th>Subject</th>
+                                            <th>Status</th>
+                                            <th>Priority</th>
+                                            <th>Created</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${tickets.length === 0 ? `
+                                            <tr><td colspan="5" class="text-center text-muted">No tickets yet</td></tr>
+                                        ` : tickets.slice(0, 10).map(t => `
+                                            <tr onclick="window.location.href='ticket.html?id=${t.id}'" style="cursor: pointer;">
+                                                <td><span style="color: var(--primary-blue); font-weight: 600;">${t.ticket_number}</span></td>
+                                                <td>${escapeHtml(t.subject.substring(0, 40))}${t.subject.length > 40 ? '...' : ''}</td>
+                                                <td><span class="badge ${getStatusClass(t.status)}">${getStatusLabel(t.status)}</span></td>
+                                                <td><span class="priority-dot ${t.priority}"></span> ${t.priority}</td>
+                                                <td>${formatRelativeTime(t.created_at)}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Notes -->
+                        ${co.notes ? `
+                            <div class="info-card">
+                                <div class="info-card-header">Notes</div>
+                                <div class="info-card-body">
+                                    <p>${escapeHtml(co.notes)}</p>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="company-sidebar">
+                        <!-- Company Info -->
+                        <div class="info-card">
+                            <div class="info-card-header">Company Information</div>
+                            <div class="info-card-body">
+                                <div class="info-row">
+                                    <span class="info-label">Phone</span>
+                                    <span class="info-value">${co.phone || '-'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Address</span>
+                                    <span class="info-value">${co.address || '-'}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Total Tickets</span>
+                                    <span class="info-value">${co.ticket_count || 0}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Created</span>
+                                    <span class="info-value">${formatDate(co.created_at)}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Users -->
+                        <div class="info-card">
+                            <div class="info-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>Users (${co.customers ? co.customers.length : 0})</span>
+                            </div>
+                            <div>
+                                ${!co.customers || co.customers.length === 0 ? `
+                                    <div class="text-center text-muted" style="padding: var(--spacing-lg);">No users yet</div>
+                                ` : co.customers.map(c => `
+                                    <div class="user-list-item">
+                                        <div class="user-list-avatar">${getInitials(c.name)}</div>
+                                        <div class="user-list-info">
+                                            <div class="user-list-name">
+                                                ${escapeHtml(c.name)}
+                                                ${c.is_primary ? '<span class="badge badge-in-progress" style="margin-left: 4px; font-size: 0.65rem;">Primary</span>' : ''}
+                                            </div>
+                                            <div class="user-list-role">${c.role || c.email}</div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function viewReports() {
+            window.location.href = `reports.html?company=${currentCompany.id}`;
+        }
+
+        function logout() {
+            api.clearSession();
+            window.location.href = 'login.html';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

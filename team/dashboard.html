@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Team Portal - Scottship Solutions</title>
+    <link rel="stylesheet" href="../shared/css/common.css">
+    <link rel="stylesheet" href="css/team.css">
+</head>
+<body>
+    <div class="team-layout">
+        <aside class="team-sidebar">
+            <div class="sidebar-header">
+                <a href="dashboard.html" class="sidebar-logo">Scottship Solutions</a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="dashboard.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        Dashboard
+                    </a>
+                    <a href="tickets.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        All Tickets
+                        <span class="nav-badge" id="navTicketCount">--</span>
+                    </a>
+                    <a href="knowledge-base.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                        Knowledge Base
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Management</div>
+                    <a href="customers.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        Customers
+                    </a>
+                    <a href="reports.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="20" x2="18" y2="10"></line>
+                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="14"></line>
+                        </svg>
+                        Reports
+                    </a>
+                    <a href="settings.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="sidebarAvatar">--</div>
+                    <div class="user-details">
+                        <div class="user-name" id="sidebarName">Loading...</div>
+                        <div class="user-role" id="sidebarRole">Team Member</div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm mt-md" style="width: 100%;" onclick="logout()">Sign Out</button>
+            </div>
+        </aside>
+
+        <main class="team-main">
+            <header class="team-header">
+                <div class="team-header-left">
+                    <h1>Dashboard</h1>
+                    <div class="search-box">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" placeholder="Search tickets..." id="searchInput">
+                    </div>
+                </div>
+                <div class="team-header-right">
+                    <span class="text-sm text-muted" id="currentDate"></span>
+                </div>
+            </header>
+
+            <div class="team-content">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-label">Open Tickets</span>
+                            <div class="stat-card-icon blue">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-card-value" id="statOpen">--</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-label">Unassigned</span>
+                            <div class="stat-card-icon yellow">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="8.5" cy="7" r="4"></circle>
+                                    <line x1="20" y1="8" x2="20" y2="14"></line>
+                                    <line x1="23" y1="11" x2="17" y2="11"></line>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-card-value" id="statUnassigned">--</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-label">Resolved Today</span>
+                            <div class="stat-card-icon green">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-card-value" id="statResolvedToday">--</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-label">High Priority</span>
+                            <div class="stat-card-icon red">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-card-value" id="statHighPriority">--</div>
+                    </div>
+                </div>
+
+                <div class="tickets-card">
+                    <div class="tickets-card-header">
+                        <h2 class="tickets-card-title">Recent Tickets</h2>
+                        <div class="tickets-filters">
+                            <select class="filter-select" id="statusFilter">
+                                <option value="">All Status</option>
+                                <option value="open">Open</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="waiting_on_customer">Waiting</option>
+                                <option value="resolved">Resolved</option>
+                            </select>
+                            <select class="filter-select" id="priorityFilter">
+                                <option value="">All Priority</option>
+                                <option value="critical">Critical</option>
+                                <option value="high">High</option>
+                                <option value="medium">Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="ticket-table">
+                            <thead>
+                                <tr>
+                                    <th>Ticket</th>
+                                    <th>Subject</th>
+                                    <th>Customer</th>
+                                    <th>Status</th>
+                                    <th>Priority</th>
+                                    <th>Assigned To</th>
+                                    <th>Created</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ticketTableBody">
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">
+                                        <span class="spinner"></span> Loading tickets...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../shared/js/api.js"></script>
+    <script src="js/team.js"></script>
+    <script>
+        // Check auth
+        const session = requireAuth('team');
+        if (!session) {
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('sidebarName').textContent = session.user.name;
+            document.getElementById('sidebarAvatar').textContent = getInitials(session.user.name);
+            document.getElementById('sidebarRole').textContent = session.user.role === 'admin' ? 'Administrator' : 'Technician';
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            });
+
+            loadDashboard();
+        }
+
+        let allTickets = [];
+
+        async function loadDashboard() {
+            try {
+                const [ticketsRes, statsRes] = await Promise.all([
+                    api.getTickets(),
+                    api.getStats()
+                ]);
+
+                if (ticketsRes.success) {
+                    allTickets = ticketsRes.data;
+                    renderTickets(allTickets);
+                }
+
+                if (statsRes.success) {
+                    document.getElementById('statOpen').textContent = statsRes.data.open;
+                    document.getElementById('statUnassigned').textContent = statsRes.data.unassigned;
+                    document.getElementById('statResolvedToday').textContent = statsRes.data.resolved_today;
+                    document.getElementById('statHighPriority').textContent = statsRes.data.high_priority;
+                    document.getElementById('navTicketCount').textContent = statsRes.data.open;
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        function updateStats(tickets) {
+            const open = tickets.filter(t => t.status === 'open' || t.status === 'in_progress').length;
+            const unassigned = tickets.filter(t => !t.assigned_to).length;
+            const highPriority = tickets.filter(t => (t.priority === 'high' || t.priority === 'critical') && t.status !== 'closed' && t.status !== 'resolved').length;
+
+            document.getElementById('statOpen').textContent = open;
+            document.getElementById('statUnassigned').textContent = unassigned;
+            document.getElementById('statResolvedToday').textContent = '3';
+            document.getElementById('statHighPriority').textContent = highPriority;
+            document.getElementById('navTicketCount').textContent = open;
+        }
+
+        function renderTickets(tickets) {
+            const tbody = document.getElementById('ticketTableBody');
+
+            if (tickets.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">
+                            No tickets found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = tickets.map(ticket => `
+                <tr onclick="window.location.href='ticket.html?id=${ticket.id}'">
+                    <td><span class="ticket-id-link">${ticket.ticket_number}</span></td>
+                    <td><span class="ticket-subject">${escapeHtml(ticket.subject)}</span></td>
+                    <td>
+                        <div class="customer-info">
+                            <div class="customer-avatar">${getInitials(ticket.customer_name)}</div>
+                            ${escapeHtml(ticket.customer_name)}
+                        </div>
+                    </td>
+                    <td><span class="badge ${getStatusClass(ticket.status)}">${getStatusLabel(ticket.status)}</span></td>
+                    <td>
+                        <span class="priority-dot ${ticket.priority}"></span>
+                        ${getPriorityLabel(ticket.priority)}
+                    </td>
+                    <td>
+                        ${ticket.assigned_to ? `
+                            <div class="customer-info">
+                                <div class="assignee-avatar">${getInitials(ticket.assigned_to_name)}</div>
+                                ${escapeHtml(ticket.assigned_to_name)}
+                            </div>
+                        ` : '<span class="unassigned">Unassigned</span>'}
+                    </td>
+                    <td>${formatRelativeTime(ticket.created_at)}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Filters
+        document.getElementById('statusFilter').addEventListener('change', applyFilters);
+        document.getElementById('priorityFilter').addEventListener('change', applyFilters);
+
+        function applyFilters() {
+            const status = document.getElementById('statusFilter').value;
+            const priority = document.getElementById('priorityFilter').value;
+
+            let filtered = allTickets;
+
+            if (status) {
+                filtered = filtered.filter(t => t.status === status);
+            }
+            if (priority) {
+                filtered = filtered.filter(t => t.priority === priority);
+            }
+
+            renderTickets(filtered);
+        }
+
+        // Search
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            const filtered = allTickets.filter(t =>
+                t.subject.toLowerCase().includes(query) ||
+                t.ticket_number.toLowerCase().includes(query) ||
+                t.customer_name.toLowerCase().includes(query)
+            );
+            renderTickets(filtered);
+        });
+
+        function logout() {
+            api.clearSession();
+            window.location.href = 'login.html';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+    </script>
+</body>
+</html>

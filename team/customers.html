@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customers - Team Portal - Scottship Solutions</title>
+    <link rel="stylesheet" href="../shared/css/common.css">
+    <link rel="stylesheet" href="css/team.css">
+    <style>
+        .tabs {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+            border-bottom: 2px solid var(--gray-200);
+            padding-bottom: var(--spacing-sm);
+        }
+        .tab-btn {
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border: none;
+            background: none;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            color: var(--gray-500);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -10px;
+            transition: all 0.2s;
+        }
+        .tab-btn:hover {
+            color: var(--gray-700);
+        }
+        .tab-btn.active {
+            color: var(--primary-blue);
+            border-bottom-color: var(--primary-blue);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .company-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .company-card:hover {
+            border-color: var(--primary-blue);
+            box-shadow: var(--shadow-md);
+        }
+        .company-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-md);
+        }
+        .company-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+        .company-industry {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+        .company-stats {
+            display: flex;
+            gap: var(--spacing-lg);
+        }
+        .company-stat {
+            text-align: center;
+        }
+        .company-stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+        .company-stat-label {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+        .company-meta {
+            display: flex;
+            gap: var(--spacing-lg);
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+        .company-meta svg {
+            width: 14px;
+            height: 14px;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+        .sort-controls {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+        }
+        .sort-controls label {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+        .sortable:hover {
+            color: var(--primary-blue);
+        }
+        .sortable::after {
+            content: '';
+            display: inline-block;
+            width: 0;
+            height: 0;
+            margin-left: 6px;
+            vertical-align: middle;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid var(--gray-400);
+            opacity: 0.5;
+        }
+        .sortable.asc::after {
+            border-top: none;
+            border-bottom: 4px solid var(--primary-blue);
+            opacity: 1;
+        }
+        .sortable.desc::after {
+            border-top: 4px solid var(--primary-blue);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="team-layout">
+        <aside class="team-sidebar">
+            <div class="sidebar-header">
+                <a href="dashboard.html" class="sidebar-logo">Scottship Solutions</a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        Dashboard
+                    </a>
+                    <a href="tickets.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        All Tickets
+                    </a>
+                    <a href="knowledge-base.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                        Knowledge Base
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Management</div>
+                    <a href="customers.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        Customers
+                    </a>
+                    <a href="reports.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="20" x2="18" y2="10"></line>
+                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="14"></line>
+                        </svg>
+                        Reports
+                    </a>
+                    <a href="settings.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="sidebarAvatar">--</div>
+                    <div class="user-details">
+                        <div class="user-name" id="sidebarName">Loading...</div>
+                        <div class="user-role" id="sidebarRole">Team Member</div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm mt-md" style="width: 100%;" onclick="logout()">Sign Out</button>
+            </div>
+        </aside>
+
+        <main class="team-main">
+            <header class="team-header">
+                <div class="team-header-left">
+                    <h1>Customers</h1>
+                    <div class="search-box">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" placeholder="Search..." id="searchInput">
+                    </div>
+                </div>
+                <div class="team-header-right">
+                    <button class="btn btn-secondary" onclick="showNewCompanyModal()">+ Add Company</button>
+                    <button class="btn btn-primary" onclick="showNewCustomerModal()">+ Add User</button>
+                </div>
+            </header>
+
+            <div class="team-content">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="companies">Companies</button>
+                    <button class="tab-btn" data-tab="users">All Users</button>
+                </div>
+
+                <!-- Companies Tab -->
+                <div class="tab-content active" id="companiesTab">
+                    <div class="sort-controls">
+                        <label>Sort by:</label>
+                        <select class="filter-select" id="companySortField">
+                            <option value="name">Name</option>
+                            <option value="industry">Industry</option>
+                            <option value="customer_count">Users</option>
+                            <option value="open_tickets">Open Tickets</option>
+                            <option value="created_at">Created Date</option>
+                        </select>
+                        <select class="filter-select" id="companySortDir">
+                            <option value="asc">A-Z / Low-High</option>
+                            <option value="desc">Z-A / High-Low</option>
+                        </select>
+                    </div>
+                    <div id="companyList">
+                        <div class="empty-state"><span class="spinner"></span> Loading companies...</div>
+                    </div>
+                </div>
+
+                <!-- Users Tab -->
+                <div class="tab-content" id="usersTab">
+                    <div class="tickets-card">
+                        <div class="table-container">
+                            <table class="customers-table">
+                                <thead>
+                                    <tr>
+                                        <th class="sortable asc" data-sort="name">Name</th>
+                                        <th class="sortable" data-sort="company_name">Company</th>
+                                        <th class="sortable" data-sort="email">Email</th>
+                                        <th class="sortable" data-sort="role">Role</th>
+                                        <th class="sortable" data-sort="open_tickets">Open Tickets</th>
+                                        <th class="sortable" data-sort="is_active">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customerTableBody">
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">
+                                            <span class="spinner"></span> Loading users...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- New Company Modal -->
+    <div class="modal-overlay hidden" id="newCompanyModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Add New Company</h2>
+                <button class="modal-close" onclick="hideModal('newCompanyModal')">&times;</button>
+            </div>
+            <form id="newCompanyForm">
+                <div class="modal-body">
+                    <div id="companyModalAlert"></div>
+
+                    <div class="form-group">
+                        <label for="companyName" class="form-label">Company Name *</label>
+                        <input type="text" id="companyName" class="form-input" required placeholder="Acme Corporation">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="companyIndustry" class="form-label">Industry</label>
+                        <input type="text" id="companyIndustry" class="form-input" placeholder="e.g., Technology, Healthcare, Finance">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="companyAddress" class="form-label">Address</label>
+                        <input type="text" id="companyAddress" class="form-input" placeholder="123 Main St, City, State">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="companyPhone" class="form-label">Phone Number</label>
+                        <input type="tel" id="companyPhone" class="form-input" placeholder="(555) 123-4567">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="companyNotes" class="form-label">Notes</label>
+                        <textarea id="companyNotes" class="form-textarea" rows="3" placeholder="Any notes about this company..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="hideModal('newCompanyModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Company</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- New Customer Modal -->
+    <div class="modal-overlay hidden" id="newCustomerModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Add New User</h2>
+                <button class="modal-close" onclick="hideModal('newCustomerModal')">&times;</button>
+            </div>
+            <form id="newCustomerForm">
+                <div class="modal-body">
+                    <div id="customerModalAlert"></div>
+
+                    <div class="form-group">
+                        <label for="customerCompany" class="form-label">Company *</label>
+                        <select id="customerCompany" class="form-select" required>
+                            <option value="">Select a company...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customerName" class="form-label">Full Name *</label>
+                        <input type="text" id="customerName" class="form-input" required placeholder="John Smith">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customerEmail" class="form-label">Email Address *</label>
+                        <input type="email" id="customerEmail" class="form-input" required placeholder="john@acme.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customerPhone" class="form-label">Phone Number</label>
+                        <input type="tel" id="customerPhone" class="form-input" placeholder="(555) 123-4567">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customerRole" class="form-label">Job Title / Role</label>
+                        <input type="text" id="customerRole" class="form-input" placeholder="e.g., IT Manager, Developer">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="customerPrimary">
+                            <span>Primary contact for company</span>
+                        </label>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <strong>Note:</strong> A welcome email with password setup instructions will be sent to the user's email address.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="hideModal('newCustomerModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../shared/js/api.js"></script>
+    <script src="js/team.js"></script>
+    <script>
+        const session = requireAuth('team');
+        if (!session) {
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('sidebarName').textContent = session.user.name;
+            document.getElementById('sidebarAvatar').textContent = getInitials(session.user.name);
+            document.getElementById('sidebarRole').textContent = session.user.role === 'admin' ? 'Administrator' : 'Technician';
+            loadData();
+        }
+
+        let allCompanies = [];
+        let allCustomers = [];
+        let companySort = { field: 'name', dir: 'asc' };
+        let customerSort = { field: 'name', dir: 'asc' };
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById(this.dataset.tab + 'Tab').classList.add('active');
+            });
+        });
+
+        // Company sort controls
+        document.getElementById('companySortField').addEventListener('change', applyCompanySort);
+        document.getElementById('companySortDir').addEventListener('change', applyCompanySort);
+
+        // Customer table sort
+        document.querySelectorAll('#usersTab .sortable').forEach(th => {
+            th.addEventListener('click', function() {
+                const field = this.dataset.sort;
+                if (customerSort.field === field) {
+                    customerSort.dir = customerSort.dir === 'asc' ? 'desc' : 'asc';
+                } else {
+                    customerSort.field = field;
+                    customerSort.dir = 'asc';
+                }
+                document.querySelectorAll('#usersTab .sortable').forEach(h => h.classList.remove('asc', 'desc'));
+                this.classList.add(customerSort.dir);
+                applyCustomerSort();
+            });
+        });
+
+        function sortData(data, field, dir) {
+            return [...data].sort((a, b) => {
+                let aVal = a[field];
+                let bVal = b[field];
+                if (aVal == null) aVal = '';
+                if (bVal == null) bVal = '';
+                if (field === 'created_at') {
+                    aVal = new Date(aVal).getTime();
+                    bVal = new Date(bVal).getTime();
+                }
+                if (typeof aVal === 'string') {
+                    aVal = aVal.toLowerCase();
+                    bVal = bVal.toLowerCase();
+                }
+                if (aVal < bVal) return dir === 'asc' ? -1 : 1;
+                if (aVal > bVal) return dir === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        function applyCompanySort() {
+            companySort.field = document.getElementById('companySortField').value;
+            companySort.dir = document.getElementById('companySortDir').value;
+            const sorted = sortData(allCompanies, companySort.field, companySort.dir);
+            renderCompanies(sorted);
+        }
+
+        function applyCustomerSort() {
+            const sorted = sortData(allCustomers, customerSort.field, customerSort.dir);
+            renderCustomers(sorted);
+        }
+
+        async function loadData() {
+            try {
+                const [companiesRes, customersRes] = await Promise.all([
+                    api.getCompanies(),
+                    api.getCustomers()
+                ]);
+
+                if (companiesRes.success) {
+                    allCompanies = companiesRes.data;
+                    applyCompanySort();
+                    populateCompanyDropdown();
+                }
+
+                if (customersRes.success) {
+                    allCustomers = customersRes.data;
+                    applyCustomerSort();
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        function renderCompanies(companies) {
+            const container = document.getElementById('companyList');
+
+            if (companies.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No companies found</h3>
+                        <p>Click "Add Company" to create one.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = companies.map(co => `
+                <div class="company-card" onclick="window.location.href='company.html?id=${co.id}'">
+                    <div class="company-header">
+                        <div>
+                            <div class="company-name">${escapeHtml(co.name)}</div>
+                            <div class="company-industry">${co.industry || 'No industry specified'}</div>
+                        </div>
+                        <div class="company-stats">
+                            <div class="company-stat">
+                                <div class="company-stat-value">${co.customer_count || 0}</div>
+                                <div class="company-stat-label">Users</div>
+                            </div>
+                            <div class="company-stat">
+                                <div class="company-stat-value">${co.open_tickets || 0}</div>
+                                <div class="company-stat-label">Open Tickets</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="company-meta">
+                        ${co.phone ? `<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72"></path></svg>${co.phone}</span>` : ''}
+                        ${co.address ? `<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>${co.address}</span>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderCustomers(customers) {
+            const tbody = document.getElementById('customerTableBody');
+
+            if (customers.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">
+                            No users found. Click "Add User" to create one.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = customers.map(c => `
+                <tr>
+                    <td>
+                        <div class="customer-info">
+                            <div class="customer-avatar">${getInitials(c.name)}</div>
+                            <div>
+                                <strong>${escapeHtml(c.name)}</strong>
+                                ${c.is_primary ? '<span class="badge badge-in-progress" style="margin-left: 8px; font-size: 0.7rem;">Primary</span>' : ''}
+                            </div>
+                        </div>
+                    </td>
+                    <td>${escapeHtml(c.company_name)}</td>
+                    <td><a href="mailto:${c.email}">${c.email}</a></td>
+                    <td>${c.role || '-'}</td>
+                    <td>
+                        ${c.open_tickets > 0 ?
+                            `<span class="badge badge-open">${c.open_tickets} open</span>` :
+                            '<span class="text-muted">None</span>'
+                        }
+                    </td>
+                    <td>
+                        <span class="badge ${c.is_active ? 'badge-resolved' : 'badge-closed'}">
+                            ${c.is_active ? 'Active' : 'Inactive'}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function populateCompanyDropdown() {
+            const select = document.getElementById('customerCompany');
+            select.innerHTML = '<option value="">Select a company...</option>' +
+                allCompanies.map(co => `<option value="${co.id}">${escapeHtml(co.name)}</option>`).join('');
+        }
+
+        // Search
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+
+            // Filter and sort companies
+            let filteredCompanies = allCompanies.filter(co =>
+                co.name.toLowerCase().includes(query) ||
+                (co.industry && co.industry.toLowerCase().includes(query))
+            );
+            filteredCompanies = sortData(filteredCompanies, companySort.field, companySort.dir);
+            renderCompanies(filteredCompanies);
+
+            // Filter and sort customers
+            let filteredCustomers = allCustomers.filter(c =>
+                c.name.toLowerCase().includes(query) ||
+                c.company_name.toLowerCase().includes(query) ||
+                c.email.toLowerCase().includes(query)
+            );
+            filteredCustomers = sortData(filteredCustomers, customerSort.field, customerSort.dir);
+            renderCustomers(filteredCustomers);
+        });
+
+        // New Company Modal
+        function showNewCompanyModal() {
+            document.getElementById('newCompanyModal').classList.remove('hidden');
+            document.getElementById('companyModalAlert').innerHTML = '';
+            document.getElementById('newCompanyForm').reset();
+            document.getElementById('companyName').focus();
+        }
+
+        // New Customer Modal
+        function showNewCustomerModal() {
+            if (allCompanies.length === 0) {
+                alert('Please create a company first before adding users.');
+                return;
+            }
+            document.getElementById('newCustomerModal').classList.remove('hidden');
+            document.getElementById('customerModalAlert').innerHTML = '';
+            document.getElementById('newCustomerForm').reset();
+            document.getElementById('customerCompany').focus();
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        // New Company Form
+        document.getElementById('newCompanyForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const alertContainer = document.getElementById('companyModalAlert');
+
+            const data = {
+                name: document.getElementById('companyName').value.trim(),
+                industry: document.getElementById('companyIndustry').value.trim(),
+                address: document.getElementById('companyAddress').value.trim(),
+                phone: document.getElementById('companyPhone').value.trim(),
+                notes: document.getElementById('companyNotes').value.trim()
+            };
+
+            try {
+                const response = await api.createCompany(data);
+
+                if (response.success) {
+                    alertContainer.innerHTML = '<div class="alert alert-success">Company created successfully!</div>';
+                    setTimeout(() => {
+                        hideModal('newCompanyModal');
+                        loadData();
+                    }, 1000);
+                } else {
+                    alertContainer.innerHTML = `<div class="alert alert-error">${response.message || 'Error creating company'}</div>`;
+                }
+            } catch (error) {
+                alertContainer.innerHTML = '<div class="alert alert-error">Error creating company</div>';
+            }
+        });
+
+        // New Customer Form
+        document.getElementById('newCustomerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const alertContainer = document.getElementById('customerModalAlert');
+
+            const data = {
+                company_id: document.getElementById('customerCompany').value,
+                name: document.getElementById('customerName').value.trim(),
+                email: document.getElementById('customerEmail').value.trim(),
+                phone: document.getElementById('customerPhone').value.trim(),
+                role: document.getElementById('customerRole').value.trim(),
+                is_primary: document.getElementById('customerPrimary').checked
+            };
+
+            try {
+                const response = await api.createCustomer(data);
+
+                if (response.success) {
+                    alertContainer.innerHTML = '<div class="alert alert-success">User created successfully! Welcome email sent.</div>';
+                    setTimeout(() => {
+                        hideModal('newCustomerModal');
+                        loadData();
+                    }, 1000);
+                } else {
+                    alertContainer.innerHTML = `<div class="alert alert-error">${response.message || 'Error creating user'}</div>`;
+                }
+            } catch (error) {
+                alertContainer.innerHTML = '<div class="alert alert-error">Error creating user</div>';
+            }
+        });
+
+        function logout() {
+            api.clearSession();
+            window.location.href = 'login.html';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

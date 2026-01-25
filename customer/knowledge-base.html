@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Base - Scottship Solutions</title>
+    <link rel="stylesheet" href="../shared/css/common.css">
+    <link rel="stylesheet" href="css/customer.css">
+    <style>
+        .kb-header {
+            text-align: center;
+            padding: var(--spacing-xl) 0;
+            margin-bottom: var(--spacing-xl);
+        }
+        .kb-header h1 {
+            font-size: 2rem;
+            margin-bottom: var(--spacing-sm);
+        }
+        .kb-header p {
+            color: var(--gray-500);
+            font-size: 1.1rem;
+        }
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto var(--spacing-xl);
+        }
+        .search-input-large {
+            width: 100%;
+            padding: var(--spacing-md) var(--spacing-lg);
+            font-size: 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            transition: border-color 0.2s;
+        }
+        .search-input-large:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+        }
+        .category-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .category-card:hover, .category-card.active {
+            border-color: var(--primary-blue);
+            background: var(--light-blue);
+        }
+        .category-card.active {
+            border-width: 2px;
+        }
+        .category-card.child {
+            border-left: 3px solid var(--primary-blue);
+        }
+        .category-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--light-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--spacing-xs);
+            color: var(--primary-blue);
+        }
+        .category-card.active .category-icon {
+            background: var(--primary-blue);
+            color: white;
+        }
+        .category-name {
+            font-weight: 600;
+            color: var(--gray-800);
+            font-size: 0.875rem;
+        }
+        .category-count {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+        .tags-section {
+            margin-bottom: var(--spacing-lg);
+        }
+        .tags-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-sm);
+        }
+        .tag-filter {
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--gray-200);
+            background: var(--white);
+            color: var(--gray-600);
+        }
+        .tag-filter:hover {
+            border-color: var(--primary-blue);
+        }
+        .tag-filter.active {
+            color: white;
+            border-color: transparent;
+        }
+        .articles-section {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+        }
+        .articles-header {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--gray-100);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .articles-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+        .article-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .article-item {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--gray-100);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .article-item:hover {
+            background: var(--gray-50);
+        }
+        .article-item:last-child {
+            border-bottom: none;
+        }
+        .article-category-path {
+            font-size: 0.75rem;
+            color: var(--primary-blue);
+            margin-bottom: var(--spacing-xs);
+        }
+        .article-title {
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: var(--spacing-xs);
+        }
+        .article-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-xs);
+            margin-bottom: var(--spacing-sm);
+        }
+        .article-tag {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            color: white;
+        }
+        .article-excerpt {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            line-height: 1.5;
+            margin-bottom: var(--spacing-sm);
+        }
+        .article-meta {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+        }
+        .article-view {
+            display: none;
+        }
+        .article-view.active {
+            display: block;
+        }
+        .article-content {
+            padding: var(--spacing-xl);
+        }
+        .article-content h1, .article-content h2, .article-content h3 {
+            margin-top: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+        }
+        .article-content p {
+            margin-bottom: var(--spacing-md);
+            line-height: 1.7;
+        }
+        .article-content ul, .article-content ol {
+            margin-bottom: var(--spacing-md);
+            padding-left: var(--spacing-xl);
+        }
+        .article-content li {
+            margin-bottom: var(--spacing-xs);
+        }
+        .article-content code {
+            background: var(--gray-100);
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+            font-family: monospace;
+        }
+        .article-content pre {
+            background: var(--gray-100);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+        }
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            color: var(--primary-blue);
+            cursor: pointer;
+            font-size: 0.875rem;
+            margin-bottom: var(--spacing-lg);
+        }
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+        .article-view-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+        }
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-xl);
+            color: var(--gray-500);
+        }
+    </style>
+</head>
+<body>
+    <div class="customer-layout">
+        <header class="customer-header">
+            <div class="header-left">
+                <a href="dashboard.html" class="logo">Scottship Solutions</a>
+            </div>
+            <nav class="header-nav">
+                <a href="dashboard.html" class="nav-link">My Tickets</a>
+                <a href="new-ticket.html" class="nav-link">New Ticket</a>
+                <a href="knowledge-base.html" class="nav-link active">Help Center</a>
+            </nav>
+            <div class="header-right">
+                <div class="user-menu">
+                    <span id="userName">Loading...</span>
+                    <button class="btn btn-secondary btn-sm" onclick="logout()">Sign Out</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="customer-main">
+            <!-- List View -->
+            <div id="listView">
+                <div class="kb-header">
+                    <h1>Help Center</h1>
+                    <p>Find answers to common questions and learn how to use our services</p>
+                </div>
+
+                <div class="search-container">
+                    <input type="text" class="search-input-large" placeholder="Search for help articles..." id="searchInput">
+                </div>
+
+                <div class="categories-grid" id="categoriesGrid">
+                    <!-- Categories loaded dynamically -->
+                </div>
+
+                <div class="tags-section" id="tagsSection" style="display: none;">
+                    <div class="tags-list" id="tagsList"></div>
+                </div>
+
+                <div class="articles-section">
+                    <div class="articles-header">
+                        <h2 id="articlesTitle">All Articles</h2>
+                        <span class="text-muted text-sm" id="articleCount">0 articles</span>
+                    </div>
+                    <ul class="article-list" id="articleList">
+                        <li class="empty-state"><span class="spinner"></span> Loading articles...</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Article View -->
+            <div id="articleView" class="article-view">
+                <div class="articles-section">
+                    <div class="article-content">
+                        <div class="back-btn" onclick="showListView()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 12H5M12 19l-7-7 7-7"/>
+                            </svg>
+                            Back to Help Center
+                        </div>
+                        <div id="articleContentArea"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../shared/js/api.js"></script>
+    <script>
+        const session = requireAuth('customer');
+        if (session) {
+            document.getElementById('userName').textContent = session.user.contact_name;
+            loadData();
+        }
+
+        let allArticles = [];
+        let allCategories = [];
+        let allTags = [];
+        let selectedCategory = null;
+        let selectedTag = null;
+
+        async function loadData() {
+            try {
+                const [articlesRes, categoriesRes, tagsRes] = await Promise.all([
+                    api.getKnowledgeBase(),
+                    api.getKBCategories(),
+                    api.getKBTags()
+                ]);
+
+                if (articlesRes.success) {
+                    allArticles = articlesRes.data;
+                }
+
+                if (categoriesRes.success) {
+                    allCategories = categoriesRes.data;
+                }
+
+                if (tagsRes.success) {
+                    allTags = tagsRes.data.filter(t => t.usage_count > 0);
+                }
+
+                renderCategories();
+                renderTags();
+                renderArticles();
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        function buildCategoryHierarchy() {
+            const rootCategories = allCategories.filter(c => !c.parent_id);
+            return rootCategories.map(parent => ({
+                ...parent,
+                children: allCategories.filter(c => c.parent_id === parent.id)
+            }));
+        }
+
+        function renderCategories() {
+            const grid = document.getElementById('categoriesGrid');
+
+            // Count articles per category (including children)
+            const categoryCounts = {};
+            allArticles.forEach(article => {
+                if (article.category_id) {
+                    categoryCounts[article.category_id] = (categoryCounts[article.category_id] || 0) + 1;
+                }
+            });
+
+            // Add parent counts
+            const hierarchy = buildCategoryHierarchy();
+            hierarchy.forEach(parent => {
+                let count = categoryCounts[parent.id] || 0;
+                parent.children.forEach(child => {
+                    count += categoryCounts[child.id] || 0;
+                });
+                categoryCounts[parent.id] = count;
+            });
+
+            // Only show categories that have articles
+            const categoriesWithArticles = hierarchy.filter(cat => categoryCounts[cat.id] > 0);
+
+            if (categoriesWithArticles.length === 0 && allArticles.length === 0) {
+                grid.style.display = 'none';
+                return;
+            }
+
+            let html = `
+                <div class="category-card ${selectedCategory === null ? 'active' : ''}" onclick="filterByCategory(null)">
+                    <div class="category-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                    </div>
+                    <div class="category-name">All</div>
+                    <div class="category-count">${allArticles.length} articles</div>
+                </div>
+            `;
+
+            categoriesWithArticles.forEach(parent => {
+                html += `
+                    <div class="category-card ${selectedCategory === parent.id ? 'active' : ''}" onclick="filterByCategory(${parent.id})">
+                        <div class="category-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="category-name">${escapeHtml(parent.name)}</div>
+                        <div class="category-count">${categoryCounts[parent.id] || 0} articles</div>
+                    </div>
+                `;
+
+                // Show children as sub-cards
+                parent.children.filter(c => categoryCounts[c.id] > 0).forEach(child => {
+                    html += `
+                        <div class="category-card child ${selectedCategory === child.id ? 'active' : ''}" onclick="filterByCategory(${child.id})">
+                            <div class="category-name">${escapeHtml(child.name)}</div>
+                            <div class="category-count">${categoryCounts[child.id] || 0} articles</div>
+                        </div>
+                    `;
+                });
+            });
+
+            grid.innerHTML = html;
+        }
+
+        function renderTags() {
+            const section = document.getElementById('tagsSection');
+            const list = document.getElementById('tagsList');
+
+            if (allTags.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+
+            section.style.display = 'block';
+            list.innerHTML = allTags.map(tag => `
+                <span class="tag-filter ${selectedTag === tag.name ? 'active' : ''}"
+                      style="${selectedTag === tag.name ? 'background:' + tag.color : ''}"
+                      onclick="filterByTag('${tag.name}', '${tag.color}')">
+                    ${escapeHtml(tag.name)}
+                </span>
+            `).join('');
+
+            if (selectedTag) {
+                list.innerHTML = `
+                    <span class="tag-filter" onclick="filterByTag(null)">Clear filter</span>
+                ` + list.innerHTML;
+            }
+        }
+
+        function filterByCategory(categoryId) {
+            selectedCategory = categoryId;
+            renderCategories();
+            renderArticles();
+        }
+
+        function filterByTag(tagName, color) {
+            selectedTag = selectedTag === tagName ? null : tagName;
+            renderTags();
+            renderArticles();
+        }
+
+        function renderArticles() {
+            const list = document.getElementById('articleList');
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+
+            let filtered = [...allArticles];
+
+            // Filter by category (including children)
+            if (selectedCategory !== null) {
+                const childIds = allCategories.filter(c => c.parent_id === selectedCategory).map(c => c.id);
+                filtered = filtered.filter(a => a.category_id === selectedCategory || childIds.includes(a.category_id));
+            }
+
+            // Filter by tag
+            if (selectedTag) {
+                filtered = filtered.filter(a => a.tags && a.tags.includes(selectedTag));
+            }
+
+            // Filter by search
+            if (searchQuery) {
+                filtered = filtered.filter(a =>
+                    a.title.toLowerCase().includes(searchQuery) ||
+                    a.content.toLowerCase().includes(searchQuery) ||
+                    (a.tags && a.tags.some(t => t.includes(searchQuery)))
+                );
+            }
+
+            // Update header
+            let title = 'All Articles';
+            if (selectedCategory) {
+                const cat = allCategories.find(c => c.id === selectedCategory);
+                title = cat ? cat.name : 'Articles';
+            }
+            if (selectedTag) {
+                title += ` tagged "${selectedTag}"`;
+            }
+            if (searchQuery) {
+                title = 'Search Results';
+            }
+
+            document.getElementById('articlesTitle').textContent = title;
+            document.getElementById('articleCount').textContent = `${filtered.length} article${filtered.length !== 1 ? 's' : ''}`;
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<li class="empty-state">No articles found</li>';
+                return;
+            }
+
+            list.innerHTML = filtered.map(article => `
+                <li class="article-item" onclick="viewArticle(${article.id})">
+                    ${article.category_path && article.category_path.length > 0 ? `
+                        <div class="article-category-path">${article.category_path.map(escapeHtml).join(' › ')}</div>
+                    ` : ''}
+                    <div class="article-title">${escapeHtml(article.title)}</div>
+                    ${article.tag_info && article.tag_info.length > 0 ? `
+                        <div class="article-tags">
+                            ${article.tag_info.map(t => `<span class="article-tag" style="background: ${t.color}">${escapeHtml(t.name)}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                    <div class="article-excerpt">${escapeHtml(article.content.substring(0, 180))}...</div>
+                    <div class="article-meta">Updated ${formatRelativeTime(article.updated_at)}</div>
+                </li>
+            `).join('');
+        }
+
+        document.getElementById('searchInput').addEventListener('input', renderArticles);
+
+        function viewArticle(id) {
+            const article = allArticles.find(a => a.id === id);
+            if (!article) return;
+
+            document.getElementById('listView').style.display = 'none';
+            document.getElementById('articleView').classList.add('active');
+
+            // Simple markdown to HTML conversion
+            let content = article.content;
+            content = content.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+            content = content.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+            content = content.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+            content = content.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            content = content.replace(/\*(.+?)\*/g, '<em>$1</em>');
+            content = content.replace(/`(.+?)`/g, '<code>$1</code>');
+            content = content.replace(/^\- (.+)$/gm, '<li>$1</li>');
+            content = content.replace(/^(\d+)\. (.+)$/gm, '<li>$2</li>');
+            content = content.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+            content = content.replace(/\n\n/g, '</p><p>');
+            content = '<p>' + content + '</p>';
+            content = content.replace(/<p><h/g, '<h').replace(/<\/h(\d)><\/p>/g, '</h$1>');
+            content = content.replace(/<p><ul>/g, '<ul>').replace(/<\/ul><\/p>/g, '</ul>');
+
+            let tagsHtml = '';
+            if (article.tag_info && article.tag_info.length > 0) {
+                tagsHtml = `
+                    <div class="article-view-tags">
+                        ${article.tag_info.map(t => `<span class="article-tag" style="background: ${t.color}; padding: 4px 12px;">${escapeHtml(t.name)}</span>`).join('')}
+                    </div>
+                `;
+            }
+
+            document.getElementById('articleContentArea').innerHTML = `
+                ${article.category_path && article.category_path.length > 0 ? `
+                    <div class="article-category-path" style="margin-bottom: var(--spacing-sm);">${article.category_path.map(escapeHtml).join(' › ')}</div>
+                ` : ''}
+                <h1 style="margin-top: 0;">${escapeHtml(article.title)}</h1>
+                <div class="article-meta" style="margin-bottom: var(--spacing-md);">
+                    Last updated ${formatRelativeTime(article.updated_at)}
+                </div>
+                ${tagsHtml}
+                <hr style="margin: var(--spacing-lg) 0; border: none; border-top: 1px solid var(--gray-200);">
+                ${content}
+            `;
+        }
+
+        function showListView() {
+            document.getElementById('listView').style.display = 'block';
+            document.getElementById('articleView').classList.remove('active');
+        }
+
+        function logout() {
+            api.clearSession();
+            window.location.href = 'login.html';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Team Portal - Scottship Solutions</title>
+    <link rel="stylesheet" href="../shared/css/common.css">
+    <link rel="stylesheet" href="css/team.css">
+    <style>
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: var(--spacing-xl);
+            max-width: 1000px;
+        }
+        .settings-nav {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            padding: var(--spacing-md);
+        }
+        .settings-nav-item {
+            display: block;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            color: var(--gray-600);
+            text-decoration: none;
+            font-size: 0.875rem;
+            margin-bottom: var(--spacing-xs);
+            cursor: pointer;
+        }
+        .settings-nav-item:hover {
+            background: var(--gray-100);
+        }
+        .settings-nav-item.active {
+            background: var(--light-blue);
+            color: var(--primary-blue);
+            font-weight: 500;
+        }
+        .settings-content {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+        }
+        .settings-section {
+            padding: var(--spacing-xl);
+            border-bottom: 1px solid var(--gray-200);
+            display: none;
+        }
+        .settings-section.active {
+            display: block;
+        }
+        .settings-section:last-child {
+            border-bottom: none;
+        }
+        .settings-section h3 {
+            margin-bottom: var(--spacing-lg);
+        }
+        .team-member-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-md);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-sm);
+        }
+        .team-member-info {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        .category-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-md);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-sm);
+        }
+        @media (max-width: 768px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .filter-select {
+            padding: 6px 12px;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            background: var(--white);
+        }
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+        .alert {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-md);
+            font-size: 0.875rem;
+        }
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+    </style>
+</head>
+<body>
+    <div class="team-layout">
+        <aside class="team-sidebar">
+            <div class="sidebar-header">
+                <a href="dashboard.html" class="sidebar-logo">Scottship Solutions</a>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        Dashboard
+                    </a>
+                    <a href="tickets.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path></svg>
+                        All Tickets
+                    </a>
+                    <a href="knowledge-base.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                        Knowledge Base
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Management</div>
+                    <a href="customers.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                        Customers
+                    </a>
+                    <a href="reports.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        Reports
+                    </a>
+                    <a href="settings.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle></svg>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="sidebarAvatar">--</div>
+                    <div class="user-details">
+                        <div class="user-name" id="sidebarName">Loading...</div>
+                        <div class="user-role" id="sidebarRole">Team Member</div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm mt-md" style="width: 100%;" onclick="logout()">Sign Out</button>
+            </div>
+        </aside>
+
+        <main class="team-main">
+            <header class="team-header">
+                <div class="team-header-left">
+                    <h1>Settings</h1>
+                </div>
+            </header>
+
+            <div class="team-content">
+                <div class="settings-grid">
+                    <div class="settings-nav">
+                        <div class="settings-nav-item active" data-section="team">Team Members</div>
+                        <div class="settings-nav-item" data-section="categories">Categories</div>
+                        <div class="settings-nav-item" data-section="profile">My Profile</div>
+                    </div>
+
+                    <div class="settings-content">
+                        <!-- Team Members Section -->
+                        <div class="settings-section active" id="teamSection">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-lg);">
+                                <h3 style="margin: 0;">Team Members</h3>
+                                <div style="display: flex; gap: var(--spacing-sm);" id="teamActions">
+                                    <button class="btn btn-secondary btn-sm" onclick="showImportModal()">Import CSV</button>
+                                    <button class="btn btn-primary btn-sm" id="addTeamBtn" onclick="showAddTeamModal()">+ Add Team Member</button>
+                                </div>
+                            </div>
+                            <div class="sort-controls" style="display: flex; gap: var(--spacing-sm); align-items: center; margin-bottom: var(--spacing-md);">
+                                <label class="text-sm text-muted">Sort by:</label>
+                                <select class="filter-select" id="teamSortField">
+                                    <option value="name">Name</option>
+                                    <option value="email">Email</option>
+                                    <option value="role">Role</option>
+                                    <option value="is_active">Status</option>
+                                </select>
+                                <select class="filter-select" id="teamSortDir">
+                                    <option value="asc">A-Z / Active First</option>
+                                    <option value="desc">Z-A / Inactive First</option>
+                                </select>
+                            </div>
+                            <div id="teamList">
+                                <div class="empty-state"><span class="spinner"></span></div>
+                            </div>
+                        </div>
+
+                        <!-- Categories Section -->
+                        <div class="settings-section" id="categoriesSection">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-lg);">
+                                <h3 style="margin: 0;">Ticket Categories</h3>
+                                <button class="btn btn-primary btn-sm" onclick="showAddCategoryModal()">+ Add Category</button>
+                            </div>
+                            <div id="categoryList">
+                                <div class="empty-state"><span class="spinner"></span></div>
+                            </div>
+                        </div>
+
+                        <!-- Profile Section -->
+                        <div class="settings-section" id="profileSection">
+                            <h3>My Profile</h3>
+                            <div id="profileAlert"></div>
+                            <form id="profileForm" style="max-width: 500px;">
+                                <div class="form-group">
+                                    <label class="form-label">Name</label>
+                                    <input type="text" id="profileName" class="form-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" id="profileEmail" class="form-input" readonly>
+                                    <small class="text-muted">Contact an admin to change your email</small>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Role</label>
+                                    <input type="text" id="profileRole" class="form-input" readonly>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Profile</button>
+                            </form>
+
+                            <hr style="margin: var(--spacing-xl) 0; border: none; border-top: 1px solid var(--gray-200);">
+
+                            <h3>Change Password</h3>
+                            <div id="passwordAlert"></div>
+                            <form id="passwordForm" style="max-width: 500px;">
+                                <div class="form-group">
+                                    <label class="form-label">Current Password</label>
+                                    <input type="password" id="currentPassword" class="form-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">New Password</label>
+                                    <input type="password" id="newPassword" class="form-input" required minlength="6">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Confirm New Password</label>
+                                    <input type="password" id="confirmPassword" class="form-input" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update Password</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Team Member Modal -->
+    <div class="modal-overlay hidden" id="addTeamModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Team Member</h2>
+                <button class="modal-close" onclick="hideModal('addTeamModal')">&times;</button>
+            </div>
+            <form id="addTeamForm">
+                <div class="modal-body">
+                    <div id="teamModalAlert"></div>
+                    <div class="form-group">
+                        <label class="form-label">Full Name *</label>
+                        <input type="text" id="teamName" class="form-input" required placeholder="John Smith">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email *</label>
+                        <input type="email" id="teamEmail" class="form-input" required placeholder="john@scottshipsolutions.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Role *</label>
+                        <select id="teamRole" class="form-select" required>
+                            <option value="technician">Technician</option>
+                            <option value="admin">Administrator</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Initial Password *</label>
+                        <input type="password" id="teamPassword" class="form-input" required minlength="6" placeholder="Min 6 characters">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="hideModal('addTeamModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Member</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div class="modal-overlay hidden" id="addCategoryModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Category</h2>
+                <button class="modal-close" onclick="hideModal('addCategoryModal')">&times;</button>
+            </div>
+            <form id="addCategoryForm">
+                <div class="modal-body">
+                    <div id="categoryModalAlert"></div>
+                    <div class="form-group">
+                        <label class="form-label">Category Name *</label>
+                        <input type="text" id="categoryName" class="form-input" required placeholder="e.g., Backup & Recovery">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea id="categoryDescription" class="form-textarea" rows="3" placeholder="Brief description of this category"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="hideModal('addCategoryModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Category</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Import CSV Modal -->
+    <div class="modal-overlay hidden" id="importModal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Import Team Members from CSV</h2>
+                <button class="modal-close" onclick="hideModal('importModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="importModalAlert"></div>
+
+                <!-- Step 1: Download Template -->
+                <div class="import-step" style="margin-bottom: var(--spacing-lg); padding: var(--spacing-md); background: var(--gray-50); border-radius: var(--radius-md);">
+                    <div style="display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-sm);">
+                        <span style="background: var(--primary-blue); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 600;">1</span>
+                        <strong>Download Template</strong>
+                    </div>
+                    <p class="text-sm text-muted" style="margin-bottom: var(--spacing-sm);">Download the CSV template and fill in your team member data.</p>
+                    <button class="btn btn-secondary btn-sm" onclick="downloadTemplate()">Download Template</button>
+                </div>
+
+                <!-- Step 2: Upload File -->
+                <div class="import-step" style="margin-bottom: var(--spacing-lg); padding: var(--spacing-md); background: var(--gray-50); border-radius: var(--radius-md);">
+                    <div style="display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-sm);">
+                        <span style="background: var(--primary-blue); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 600;">2</span>
+                        <strong>Upload CSV File</strong>
+                    </div>
+                    <p class="text-sm text-muted" style="margin-bottom: var(--spacing-sm);">Select your completed CSV file to import.</p>
+                    <div style="border: 2px dashed var(--gray-300); border-radius: var(--radius-md); padding: var(--spacing-lg); text-align: center;" id="dropZone">
+                        <input type="file" id="csvFileInput" accept=".csv" style="display: none;">
+                        <p class="text-muted" style="margin-bottom: var(--spacing-sm);">Drag & drop your CSV file here or</p>
+                        <button class="btn btn-primary btn-sm" onclick="document.getElementById('csvFileInput').click()">Choose File</button>
+                        <p class="text-sm text-muted" id="selectedFileName" style="margin-top: var(--spacing-sm);"></p>
+                    </div>
+                </div>
+
+                <!-- Preview -->
+                <div id="importPreview" style="display: none;">
+                    <div style="display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-sm);">
+                        <span style="background: var(--primary-blue); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 600;">3</span>
+                        <strong>Preview</strong>
+                    </div>
+                    <div id="previewTable" style="max-height: 200px; overflow-y: auto; border: 1px solid var(--gray-200); border-radius: var(--radius-md);"></div>
+                </div>
+
+                <!-- Import Results -->
+                <div id="importResults" style="display: none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="hideModal('importModal')">Cancel</button>
+                <button type="button" class="btn btn-primary" id="importBtn" onclick="importUsers()" disabled>Import Users</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../shared/js/api.js"></script>
+    <script>
+        const session = requireAuth('team');
+        if (session) {
+            document.getElementById('sidebarName').textContent = session.user.name;
+            document.getElementById('sidebarAvatar').textContent = getInitials(session.user.name);
+            document.getElementById('sidebarRole').textContent = session.user.role === 'admin' ? 'Administrator' : 'Technician';
+
+            // Hide admin actions for non-admins
+            if (session.user.role !== 'admin') {
+                document.getElementById('teamActions').style.display = 'none';
+            }
+
+            // Populate profile
+            document.getElementById('profileName').value = session.user.name;
+            document.getElementById('profileEmail').value = session.user.email;
+            document.getElementById('profileRole').value = session.user.role === 'admin' ? 'Administrator' : 'Technician';
+
+            loadSettings();
+        }
+
+        let allTeamMembers = [];
+        let teamSort = { field: 'name', dir: 'asc' };
+
+        // Team sort event listeners
+        document.getElementById('teamSortField').addEventListener('change', function() {
+            teamSort.field = this.value;
+            applyTeamSort();
+        });
+        document.getElementById('teamSortDir').addEventListener('change', function() {
+            teamSort.dir = this.value;
+            applyTeamSort();
+        });
+
+        function sortTeamMembers(members, field, dir) {
+            return [...members].sort((a, b) => {
+                let aVal = a[field];
+                let bVal = b[field];
+
+                // Handle null/undefined
+                if (aVal == null) aVal = '';
+                if (bVal == null) bVal = '';
+
+                // Boolean sorting (is_active)
+                if (field === 'is_active') {
+                    aVal = aVal ? 1 : 0;
+                    bVal = bVal ? 1 : 0;
+                }
+
+                // Role sorting (admin first or last)
+                if (field === 'role') {
+                    aVal = aVal === 'admin' ? 0 : 1;
+                    bVal = bVal === 'admin' ? 0 : 1;
+                }
+
+                // String comparison
+                if (typeof aVal === 'string') {
+                    aVal = aVal.toLowerCase();
+                    bVal = bVal.toLowerCase();
+                }
+
+                if (aVal < bVal) return dir === 'asc' ? -1 : 1;
+                if (aVal > bVal) return dir === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        function applyTeamSort() {
+            const sorted = sortTeamMembers(allTeamMembers, teamSort.field, teamSort.dir);
+            renderTeamMembers(sorted);
+        }
+
+        // Navigation between sections
+        document.querySelectorAll('.settings-nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Update nav
+                document.querySelectorAll('.settings-nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+
+                // Show section
+                const sectionId = this.dataset.section + 'Section';
+                document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+                document.getElementById(sectionId).classList.add('active');
+            });
+        });
+
+        async function loadSettings() {
+            try {
+                const [usersRes, categoriesRes] = await Promise.all([
+                    api.getUsers(),
+                    api.getCategories()
+                ]);
+
+                if (usersRes.success) {
+                    allTeamMembers = usersRes.data;
+                    applyTeamSort();
+                }
+
+                if (categoriesRes.success) {
+                    renderCategories(categoriesRes.data);
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        }
+
+        function renderTeamMembers(users) {
+            const container = document.getElementById('teamList');
+            const isAdmin = session.user.role === 'admin';
+
+            container.innerHTML = users.map(u => `
+                <div class="team-member-row">
+                    <div class="team-member-info">
+                        <div class="user-avatar">${getInitials(u.name)}</div>
+                        <div>
+                            <div style="font-weight: 500;">${escapeHtml(u.name)}</div>
+                            <div class="text-sm text-muted">${u.email}</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                        <span class="badge ${u.role === 'admin' ? 'badge-in-progress' : 'badge-resolved'}">${u.role === 'admin' ? 'Admin' : 'Technician'}</span>
+                        <span class="badge ${u.is_active ? 'badge-resolved' : 'badge-closed'}">${u.is_active ? 'Active' : 'Inactive'}</span>
+                        ${isAdmin && u.id !== session.user.id ? `
+                            <button class="btn btn-secondary btn-sm" onclick="toggleUserStatus(${u.id}, ${!u.is_active})">
+                                ${u.is_active ? 'Deactivate' : 'Activate'}
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderCategories(categories) {
+            const container = document.getElementById('categoryList');
+            container.innerHTML = categories.map(c => `
+                <div class="category-row">
+                    <div>
+                        <div style="font-weight: 500;">${escapeHtml(c.name)}</div>
+                        <div class="text-sm text-muted">${c.description || 'No description'}</div>
+                    </div>
+                    <span class="badge badge-resolved">Active</span>
+                </div>
+            `).join('');
+        }
+
+        // Profile form
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('profileName').value.trim();
+            const alertContainer = document.getElementById('profileAlert');
+
+            try {
+                const response = await fetch('/api/users/me', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session.token}`
+                    },
+                    body: JSON.stringify({ name })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Update in session
+                    session.user.name = name;
+                    localStorage.setItem('teamSession', JSON.stringify(session));
+
+                    // Update UI
+                    document.getElementById('sidebarName').textContent = name;
+                    document.getElementById('sidebarAvatar').textContent = getInitials(name);
+
+                    alertContainer.innerHTML = '<div class="alert alert-success">Profile updated successfully!</div>';
+                    setTimeout(() => alertContainer.innerHTML = '', 3000);
+                } else {
+                    alertContainer.innerHTML = `<div class="alert alert-error">${result.message || 'Error updating profile'}</div>`;
+                }
+            } catch (error) {
+                alertContainer.innerHTML = '<div class="alert alert-error">Error updating profile</div>';
+            }
+        });
+
+        // Password form
+        document.getElementById('passwordForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const alertContainer = document.getElementById('passwordAlert');
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (newPassword !== confirmPassword) {
+                alertContainer.innerHTML = '<div class="alert alert-error">Passwords do not match</div>';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/users/me/password', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session.token}`
+                    },
+                    body: JSON.stringify({
+                        current_password: currentPassword,
+                        new_password: newPassword
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alertContainer.innerHTML = '<div class="alert alert-success">Password updated successfully!</div>';
+                    document.getElementById('passwordForm').reset();
+                    setTimeout(() => alertContainer.innerHTML = '', 3000);
+                } else {
+                    alertContainer.innerHTML = `<div class="alert alert-error">${result.message || 'Error updating password'}</div>`;
+                }
+            } catch (error) {
+                alertContainer.innerHTML = '<div class="alert alert-error">Error updating password</div>';
+            }
+        });
+
+        // Add team member
+        document.getElementById('addTeamForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const alertContainer = document.getElementById('teamModalAlert');
+
+            const userData = {
+                name: document.getElementById('teamName').value.trim(),
+                email: document.getElementById('teamEmail').value.trim(),
+                role: document.getElementById('teamRole').value,
+                password: document.getElementById('teamPassword').value
+            };
+
+            try {
+                const response = await fetch('/api/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session.token}`
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alertContainer.innerHTML = '<div class="alert alert-success">Team member added!</div>';
+                    document.getElementById('addTeamForm').reset();
+                    setTimeout(() => {
+                        hideModal('addTeamModal');
+                        loadSettings();
+                    }, 1000);
+                } else {
+                    alertContainer.innerHTML = `<div class="alert alert-error">${result.message || 'Error adding team member'}</div>`;
+                }
+            } catch (error) {
+                alertContainer.innerHTML = '<div class="alert alert-error">Error adding team member</div>';
+            }
+        });
+
+        // Add category
+        document.getElementById('addCategoryForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const alertContainer = document.getElementById('categoryModalAlert');
+
+            const categoryData = {
+                name: document.getElementById('categoryName').value.trim(),
+                description: document.getElementById('categoryDescription').value.trim()
+            };
+
+            try {
+                const response = await fetch('/api/categories', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session.token}`
+                    },
+                    body: JSON.stringify(categoryData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alertContainer.innerHTML = '<div class="alert alert-success">Category added!</div>';
+                    document.getElementById('addCategoryForm').reset();
+                    setTimeout(() => {
+                        hideModal('addCategoryModal');
+                        loadSettings();
+                    }, 1000);
+                } else {
+                    alertContainer.innerHTML = `<div class="alert alert-error">${result.message || 'Error adding category'}</div>`;
+                }
+            } catch (error) {
+                alertContainer.innerHTML = '<div class="alert alert-error">Error adding category</div>';
+            }
+        });
+
+        async function toggleUserStatus(userId, newStatus) {
+            try {
+                const response = await fetch(`/api/users/${userId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session.token}`
+                    },
+                    body: JSON.stringify({ is_active: newStatus })
+                });
+
+                if (response.ok) {
+                    loadSettings();
+                }
+            } catch (error) {
+                alert('Error updating user status');
+            }
+        }
+
+        function showAddTeamModal() {
+            document.getElementById('addTeamModal').classList.remove('hidden');
+            document.getElementById('teamModalAlert').innerHTML = '';
+        }
+
+        function showAddCategoryModal() {
+            document.getElementById('addCategoryModal').classList.remove('hidden');
+            document.getElementById('categoryModalAlert').innerHTML = '';
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        function logout() {
+            api.clearSession();
+            window.location.href = 'login.html';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ==================== CSV IMPORT FUNCTIONS ====================
+
+        let parsedCSVData = [];
+
+        function showImportModal() {
+            document.getElementById('importModal').classList.remove('hidden');
+            document.getElementById('importModalAlert').innerHTML = '';
+            document.getElementById('importPreview').style.display = 'none';
+            document.getElementById('importResults').style.display = 'none';
+            document.getElementById('importBtn').disabled = true;
+            document.getElementById('selectedFileName').textContent = '';
+            document.getElementById('csvFileInput').value = '';
+            parsedCSVData = [];
+        }
+
+        function downloadTemplate() {
+            const headers = ['name', 'email', 'role', 'password'];
+            const sampleData = [
+                ['John Smith', 'john@scottship.com', 'technician', 'Welcome123!'],
+                ['Jane Doe', 'jane@scottship.com', 'admin', 'SecurePass456!']
+            ];
+
+            let csvContent = headers.join(',') + '\n';
+            sampleData.forEach(row => {
+                csvContent += row.join(',') + '\n';
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'team_members_template.csv';
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
+        // File input handler
+        document.getElementById('csvFileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleCSVFile(file);
+            }
+        });
+
+        // Drag and drop handlers
+        const dropZone = document.getElementById('dropZone');
+
+        dropZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--primary-blue)';
+            dropZone.style.background = 'var(--light-blue)';
+        });
+
+        dropZone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--gray-300)';
+            dropZone.style.background = 'transparent';
+        });
+
+        dropZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--gray-300)';
+            dropZone.style.background = 'transparent';
+
+            const file = e.dataTransfer.files[0];
+            if (file && file.name.endsWith('.csv')) {
+                handleCSVFile(file);
+            } else {
+                document.getElementById('importModalAlert').innerHTML =
+                    '<div class="alert alert-error">Please upload a CSV file</div>';
+            }
+        });
+
+        function handleCSVFile(file) {
+            document.getElementById('selectedFileName').textContent = file.name;
+            document.getElementById('importModalAlert').innerHTML = '';
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const csvText = e.target.result;
+                parseCSV(csvText);
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n').filter(line => line.trim());
+
+            if (lines.length < 2) {
+                document.getElementById('importModalAlert').innerHTML =
+                    '<div class="alert alert-error">CSV file must have a header row and at least one data row</div>';
+                return;
+            }
+
+            // Parse header
+            const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase().trim());
+
+            // Validate required headers
+            const requiredHeaders = ['name', 'email'];
+            const missingHeaders = requiredHeaders.filter(h => !headers.includes(h));
+
+            if (missingHeaders.length > 0) {
+                document.getElementById('importModalAlert').innerHTML =
+                    `<div class="alert alert-error">Missing required columns: ${missingHeaders.join(', ')}</div>`;
+                return;
+            }
+
+            // Parse data rows
+            parsedCSVData = [];
+            for (let i = 1; i < lines.length; i++) {
+                const values = parseCSVLine(lines[i]);
+                if (values.length === 0 || values.every(v => !v.trim())) continue;
+
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header] = values[index] ? values[index].trim() : '';
+                });
+                parsedCSVData.push(row);
+            }
+
+            if (parsedCSVData.length === 0) {
+                document.getElementById('importModalAlert').innerHTML =
+                    '<div class="alert alert-error">No valid data rows found in CSV</div>';
+                return;
+            }
+
+            // Show preview
+            showPreview();
+            document.getElementById('importBtn').disabled = false;
+        }
+
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current);
+
+            return result.map(val => val.replace(/^"|"$/g, '').trim());
+        }
+
+        function showPreview() {
+            const preview = document.getElementById('importPreview');
+            const previewTable = document.getElementById('previewTable');
+
+            let html = `
+                <table class="customers-table" style="font-size: 0.875rem;">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Password</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            parsedCSVData.forEach((row, index) => {
+                html += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${escapeHtml(row.name || '')}</td>
+                        <td>${escapeHtml(row.email || '')}</td>
+                        <td>${escapeHtml(row.role || 'technician')}</td>
+                        <td>${row.password ? '••••••••' : '(default)'}</td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            previewTable.innerHTML = html;
+            preview.style.display = 'block';
+
+            document.getElementById('importModalAlert').innerHTML =
+                `<div class="alert alert-info">${parsedCSVData.length} user(s) ready to import</div>`;
+        }
+
+        async function importUsers() {
+            if (parsedCSVData.length === 0) return;
+
+            const importBtn = document.getElementById('importBtn');
+            importBtn.disabled = true;
+            importBtn.textContent = 'Importing...';
+
+            document.getElementById('importModalAlert').innerHTML = '';
+
+            try {
+                const response = await fetch('/api/users/bulk', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session.token}`
+                    },
+                    body: JSON.stringify({ users: parsedCSVData })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showImportResults(result.data);
+                    loadSettings();
+                } else {
+                    document.getElementById('importModalAlert').innerHTML =
+                        `<div class="alert alert-error">${result.message || 'Import failed'}</div>`;
+                }
+            } catch (error) {
+                document.getElementById('importModalAlert').innerHTML =
+                    '<div class="alert alert-error">Error importing users</div>';
+            } finally {
+                importBtn.disabled = false;
+                importBtn.textContent = 'Import Users';
+            }
+        }
+
+        function showImportResults(data) {
+            const resultsDiv = document.getElementById('importResults');
+            document.getElementById('importPreview').style.display = 'none';
+
+            let html = `
+                <div style="margin-bottom: var(--spacing-md);">
+                    <span class="badge badge-resolved" style="margin-right: var(--spacing-sm);">${data.created} Created</span>
+                    ${data.failed > 0 ? `<span class="badge badge-closed">${data.failed} Failed</span>` : ''}
+                </div>
+            `;
+
+            if (data.results.success.length > 0) {
+                html += `
+                    <div style="margin-bottom: var(--spacing-md);">
+                        <strong class="text-sm" style="color: var(--success-green);">Successfully Created:</strong>
+                        <ul style="margin: var(--spacing-xs) 0 0 var(--spacing-lg); font-size: 0.875rem;">
+                            ${data.results.success.map(u => `<li>${escapeHtml(u.name)} (${escapeHtml(u.email)}) - ${u.role}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            if (data.results.errors.length > 0) {
+                html += `
+                    <div>
+                        <strong class="text-sm" style="color: var(--error-red);">Errors:</strong>
+                        <ul style="margin: var(--spacing-xs) 0 0 var(--spacing-lg); font-size: 0.875rem;">
+                            ${data.results.errors.map(e => `<li>Row ${e.row} (${escapeHtml(e.email)}): ${escapeHtml(e.error)}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            resultsDiv.innerHTML = html;
+            resultsDiv.style.display = 'block';
+
+            document.getElementById('importModalAlert').innerHTML =
+                `<div class="alert ${data.failed === 0 ? 'alert-success' : 'alert-warning'}">Import complete!</div>`;
+        }
+    </script>
+</body>
+</html>

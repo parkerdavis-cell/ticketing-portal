@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Base - Team Portal - Scottship Solutions</title>
+    <link rel="stylesheet" href="../shared/css/common.css">
+    <link rel="stylesheet" href="css/team.css">
+    <style>
+        .kb-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--spacing-lg);
+        }
+        .kb-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            padding: var(--spacing-lg);
+            transition: box-shadow 0.2s, border-color 0.2s;
+            cursor: pointer;
+        }
+        .kb-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-blue);
+        }
+        .kb-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-sm);
+        }
+        .kb-card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin: 0;
+        }
+        .kb-card-meta {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            margin-bottom: var(--spacing-sm);
+        }
+        .kb-card-category-path {
+            font-size: 0.75rem;
+            color: var(--primary-blue);
+            margin-bottom: var(--spacing-xs);
+        }
+        .kb-card-excerpt {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            line-height: 1.5;
+            margin-bottom: var(--spacing-md);
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .kb-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--gray-100);
+        }
+        .kb-card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-xs);
+            margin-bottom: var(--spacing-sm);
+        }
+        .tag {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: white;
+        }
+        .kb-card-companies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-xs);
+        }
+        .company-tag {
+            background: var(--gray-100);
+            color: var(--gray-600);
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+        }
+        .filter-bar {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+            flex-wrap: wrap;
+        }
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            background: var(--white);
+        }
+        .search-input {
+            padding: 8px 12px;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            min-width: 250px;
+        }
+        .stats-row {
+            display: flex;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            padding: var(--spacing-md) var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+        .category-tree {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .category-tree-item {
+            padding: var(--spacing-sm);
+            border-bottom: 1px solid var(--gray-100);
+        }
+        .category-tree-item:last-child {
+            border-bottom: none;
+        }
+        .category-tree-parent {
+            font-weight: 600;
+        }
+        .category-tree-children {
+            list-style: none;
+            padding-left: var(--spacing-lg);
+            margin-top: var(--spacing-xs);
+        }
+        .category-tree-child {
+            padding: var(--spacing-xs) 0;
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+        .tag-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 0.875rem;
+            color: white;
+        }
+        .tag-item .tag-count {
+            background: rgba(255,255,255,0.3);
+            padding: 0 6px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+        }
+        .tag-input-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-sm);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            min-height: 42px;
+            align-items: center;
+        }
+        .tag-input-container .tag {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .tag-input-container .tag-remove {
+            cursor: pointer;
+            opacity: 0.7;
+        }
+        .tag-input-container .tag-remove:hover {
+            opacity: 1;
+        }
+        .tag-input-container input {
+            border: none;
+            outline: none;
+            flex: 1;
+            min-width: 100px;
+            font-size: 0.875rem;
+        }
+        .tag-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+        }
+        .tag-suggestions.show {
+            display: block;
+        }
+        .tag-suggestion {
+            padding: var(--spacing-sm) var(--spacing-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        .tag-suggestion:hover {
+            background: var(--gray-50);
+        }
+        .alert {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-md);
+            font-size: 0.875rem;
+        }
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .alert-info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <div class="team-layout">
+        <aside class="team-sidebar">
+            <div class="sidebar-header">
+                <a href="dashboard.html" class="sidebar-logo">Scottship Solutions</a>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        Dashboard
+                    </a>
+                    <a href="tickets.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path></svg>
+                        All Tickets
+                    </a>
+                    <a href="knowledge-base.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                        Knowledge Base
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Management</div>
+                    <a href="customers.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                        Customers
+                    </a>
+                    <a href="reports.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        Reports
+                    </a>
+                    <a href="settings.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle></svg>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="sidebarAvatar">--</div>
+                    <div class="user-details">
+                        <div class="user-name" id="sidebarName">Loading...</div>
+                        <div class="user-role" id="sidebarRole">Team Member</div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm mt-md" style="width: 100%;" onclick="logout()">Sign Out</button>
+            </div>
+        </aside>
+
+        <main class="team-main">
+            <header class="team-header">
+                <div class="team-header-left">
+                    <h1>Knowledge Base</h1>
+                </div>
+                <div class="team-header-right">
+                    <button class="btn btn-secondary" onclick="showTagModal()">Manage Tags</button>
+                    <button class="btn btn-secondary" onclick="showCategoryModal()">Manage Categories</button>
+                    <button class="btn btn-primary" onclick="showArticleModal()">+ New Article</button>
+                </div>
+            </header>
+
+            <div class="team-content">
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalArticles">0</div>
+                        <div class="stat-label">Total Articles</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="publishedArticles">0</div>
+                        <div class="stat-label">Published</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="draftArticles">0</div>
+                        <div class="stat-label">Drafts</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalTags">0</div>
+                        <div class="stat-label">Tags</div>
+                    </div>
+                </div>
+
+                <div class="filter-bar">
+                    <input type="text" class="search-input" placeholder="Search articles..." id="searchInput">
+                    <select class="filter-select" id="categoryFilter">
+                        <option value="">All Categories</option>
+                    </select>
+                    <select class="filter-select" id="tagFilter">
+                        <option value="">All Tags</option>
+                    </select>
+                    <select class="filter-select" id="companyFilter">
+                        <option value="">All Companies</option>
+                        <option value="public">Public (All Companies)</option>
+                    </select>
+                    <select class="filter-select" id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="published">Published</option>
+                        <option value="draft">Draft</option>
+                    </select>
+                </div>
+
+                <div class="kb-grid" id="articlesGrid">
+                    <div class="empty-state"><span class="spinner"></span> Loading articles...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Article Modal -->
+    <div class="modal-overlay hidden" id="articleModal">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2 class="modal-title" id="articleModalTitle">New Article</h2>
+                <button class="modal-close" onclick="hideModal('articleModal')">&times;</button>
+            </div>
+            <form id="articleForm">
+                <div class="modal-body">
+                    <div id="articleModalAlert"></div>
+                    <div class="form-group">
+                        <label class="form-label">Title *</label>
+                        <input type="text" id="articleTitle" class="form-input" required placeholder="Enter article title">
+                    </div>
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md);">
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select id="articleCategory" class="form-select">
+                                <option value="">Select category</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select id="articleStatus" class="form-select">
+                                <option value="true">Published</option>
+                                <option value="false">Draft</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tags</label>
+                        <div style="position: relative;">
+                            <div class="tag-input-container" id="tagInputContainer">
+                                <input type="text" id="tagInput" placeholder="Type to add tags...">
+                            </div>
+                            <div class="tag-suggestions" id="tagSuggestions"></div>
+                        </div>
+                        <small class="text-muted">Press Enter or comma to add a tag</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Content * (Markdown supported)</label>
+                        <textarea id="articleContent" class="form-textarea" rows="10" required placeholder="Write your article content here..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Company Access</label>
+                        <div style="margin-bottom: var(--spacing-sm);">
+                            <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer;">
+                                <input type="checkbox" id="articlePublic" checked>
+                                <span>Public (visible to all companies)</span>
+                            </label>
+                        </div>
+                        <div id="companyCheckboxes" style="display: none; max-height: 150px; overflow-y: auto; border: 1px solid var(--gray-200); border-radius: var(--radius-md); padding: var(--spacing-sm);"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="hideModal('articleModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="articleSubmitBtn">Create Article</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div class="modal-overlay hidden" id="categoryModal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Manage Categories</h2>
+                <button class="modal-close" onclick="hideModal('categoryModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="categoryModalAlert"></div>
+                <div id="categoryTree" style="margin-bottom: var(--spacing-lg); max-height: 300px; overflow-y: auto;"></div>
+                <hr style="margin: var(--spacing-md) 0;">
+                <h4 style="margin-bottom: var(--spacing-sm);">Add New Category</h4>
+                <form id="addCategoryForm">
+                    <div class="form-group">
+                        <label class="form-label">Parent Category (optional)</label>
+                        <select id="newCategoryParent" class="form-select">
+                            <option value="">None (Top Level)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="newCategoryName" class="form-input" placeholder="Category name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="newCategoryDesc" class="form-input" placeholder="Description (optional)">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">Add Category</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="hideModal('categoryModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tag Modal -->
+    <div class="modal-overlay hidden" id="tagModal">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Manage Tags</h2>
+                <button class="modal-close" onclick="hideModal('tagModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="tagModalAlert"></div>
+                <div id="tagList" style="margin-bottom: var(--spacing-lg);"></div>
+                <hr style="margin: var(--spacing-md) 0;">
+                <h4 style="margin-bottom: var(--spacing-sm);">Add New Tag</h4>
+                <form id="addTagForm" style="display: flex; gap: var(--spacing-sm); align-items: flex-end;">
+                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                        <input type="text" id="newTagName" class="form-input" placeholder="Tag name" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <input type="color" id="newTagColor" value="#6366f1" style="width: 42px; height: 38px; border: 1px solid var(--gray-300); border-radius: var(--radius-md); cursor: pointer;">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">Add</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="hideModal('tagModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../shared/js/api.js"></script>
+    <script>
+        const session = requireAuth('team');
+        if (session) {
+            document.getElementById('sidebarName').textContent = session.user.name;
+            document.getElementById('sidebarAvatar').textContent = getInitials(session.user.name);
+            document.getElementById('sidebarRole').textContent = session.user.role === 'admin' ? 'Administrator' : 'Technician';
+            loadData();
+        }
+
+        let allArticles = [];
+        let allCategories = [];
+        let allCompanies = [];
+        let allTags = [];
+        let editingArticleId = null;
+        let selectedTags = [];
+
+        async function loadData() {
+            try {
+                const [articlesRes, categoriesRes, companiesRes, tagsRes] = await Promise.all([
+                    api.getKnowledgeBase(),
+                    api.getKBCategories(),
+                    api.getCompanies(),
+                    api.getKBTags()
+                ]);
+
+                if (articlesRes.success) {
+                    allArticles = articlesRes.data;
+                    updateStats();
+                    renderArticles();
+                }
+
+                if (categoriesRes.success) {
+                    allCategories = categoriesRes.data;
+                    populateCategoryFilters();
+                }
+
+                if (companiesRes.success) {
+                    allCompanies = companiesRes.data;
+                    populateCompanyFilters();
+                }
+
+                if (tagsRes.success) {
+                    allTags = tagsRes.data;
+                    populateTagFilter();
+                    document.getElementById('totalTags').textContent = allTags.length;
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('totalArticles').textContent = allArticles.length;
+            document.getElementById('publishedArticles').textContent = allArticles.filter(a => a.is_published).length;
+            document.getElementById('draftArticles').textContent = allArticles.filter(a => !a.is_published).length;
+        }
+
+        function buildCategoryHierarchy() {
+            const rootCategories = allCategories.filter(c => !c.parent_id);
+            return rootCategories.map(parent => ({
+                ...parent,
+                children: allCategories.filter(c => c.parent_id === parent.id)
+            }));
+        }
+
+        function populateCategoryFilters() {
+            const categoryFilter = document.getElementById('categoryFilter');
+            const articleCategory = document.getElementById('articleCategory');
+            const parentSelect = document.getElementById('newCategoryParent');
+
+            const hierarchy = buildCategoryHierarchy();
+
+            categoryFilter.innerHTML = '<option value="">All Categories</option>';
+            articleCategory.innerHTML = '<option value="">Select category</option>';
+            parentSelect.innerHTML = '<option value="">None (Top Level)</option>';
+
+            hierarchy.forEach(parent => {
+                categoryFilter.innerHTML += `<option value="${parent.id}">${escapeHtml(parent.name)}</option>`;
+                articleCategory.innerHTML += `<option value="${parent.id}">${escapeHtml(parent.name)}</option>`;
+                parentSelect.innerHTML += `<option value="${parent.id}">${escapeHtml(parent.name)}</option>`;
+
+                parent.children.forEach(child => {
+                    categoryFilter.innerHTML += `<option value="${child.id}">&nbsp;&nbsp;└ ${escapeHtml(child.name)}</option>`;
+                    articleCategory.innerHTML += `<option value="${child.id}">&nbsp;&nbsp;└ ${escapeHtml(child.name)}</option>`;
+                });
+            });
+        }
+
+        function populateCompanyFilters() {
+            const companyFilter = document.getElementById('companyFilter');
+            const companyCheckboxes = document.getElementById('companyCheckboxes');
+
+            companyFilter.innerHTML = '<option value="">All Companies</option><option value="public">Public (All Companies)</option>';
+            allCompanies.forEach(co => {
+                companyFilter.innerHTML += `<option value="${co.id}">${escapeHtml(co.name)}</option>`;
+            });
+
+            companyCheckboxes.innerHTML = allCompanies.map(co => `
+                <label style="display: flex; align-items: center; gap: var(--spacing-sm); padding: var(--spacing-xs) 0; cursor: pointer;">
+                    <input type="checkbox" name="company" value="${co.id}">
+                    <span>${escapeHtml(co.name)}</span>
+                </label>
+            `).join('');
+        }
+
+        function populateTagFilter() {
+            const tagFilter = document.getElementById('tagFilter');
+            tagFilter.innerHTML = '<option value="">All Tags</option>';
+            allTags.forEach(tag => {
+                tagFilter.innerHTML += `<option value="${tag.name}">${tag.name} (${tag.usage_count})</option>`;
+            });
+        }
+
+        function renderArticles() {
+            const grid = document.getElementById('articlesGrid');
+            let filtered = [...allArticles];
+
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            const tag = document.getElementById('tagFilter').value;
+            const company = document.getElementById('companyFilter').value;
+            const status = document.getElementById('statusFilter').value;
+
+            if (search) {
+                filtered = filtered.filter(a =>
+                    a.title.toLowerCase().includes(search) ||
+                    a.content.toLowerCase().includes(search) ||
+                    (a.tags && a.tags.some(t => t.includes(search)))
+                );
+            }
+
+            if (category) {
+                const catId = parseInt(category);
+                const parentCat = allCategories.find(c => c.id === catId);
+                const childIds = allCategories.filter(c => c.parent_id === catId).map(c => c.id);
+                filtered = filtered.filter(a => a.category_id === catId || childIds.includes(a.category_id));
+            }
+
+            if (tag) {
+                filtered = filtered.filter(a => a.tags && a.tags.includes(tag));
+            }
+
+            if (company === 'public') {
+                filtered = filtered.filter(a => a.is_public);
+            } else if (company) {
+                filtered = filtered.filter(a => a.company_ids && a.company_ids.includes(parseInt(company)));
+            }
+
+            if (status === 'published') {
+                filtered = filtered.filter(a => a.is_published);
+            } else if (status === 'draft') {
+                filtered = filtered.filter(a => !a.is_published);
+            }
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div class="empty-state">No articles found</div>';
+                return;
+            }
+
+            grid.innerHTML = filtered.map(article => `
+                <div class="kb-card" onclick="editArticle(${article.id})">
+                    <div class="kb-card-header">
+                        <h3 class="kb-card-title">${escapeHtml(article.title)}</h3>
+                        <span class="badge ${article.is_published ? 'badge-resolved' : 'badge-waiting'}">
+                            ${article.is_published ? 'Published' : 'Draft'}
+                        </span>
+                    </div>
+                    ${article.category_path && article.category_path.length > 0 ? `
+                        <div class="kb-card-category-path">${article.category_path.map(escapeHtml).join(' › ')}</div>
+                    ` : ''}
+                    ${article.tag_info && article.tag_info.length > 0 ? `
+                        <div class="kb-card-tags">
+                            ${article.tag_info.map(t => `<span class="tag" style="background: ${t.color}">${escapeHtml(t.name)}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                    <div class="kb-card-excerpt">${escapeHtml(article.content.substring(0, 150))}...</div>
+                    <div class="kb-card-meta">Updated ${formatRelativeTime(article.updated_at)}</div>
+                    <div class="kb-card-footer">
+                        <div class="kb-card-companies">
+                            ${article.is_public
+                                ? '<span class="company-tag" style="background: var(--light-blue); color: var(--primary-blue);">All Companies</span>'
+                                : article.company_names.slice(0, 2).map(name =>
+                                    `<span class="company-tag">${escapeHtml(name)}</span>`
+                                ).join('') + (article.company_names.length > 2 ? `<span class="company-tag">+${article.company_names.length - 2}</span>` : '')
+                            }
+                        </div>
+                        <span class="text-sm text-muted">by ${escapeHtml(article.author_name)}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter event listeners
+        document.getElementById('searchInput').addEventListener('input', renderArticles);
+        document.getElementById('categoryFilter').addEventListener('change', renderArticles);
+        document.getElementById('tagFilter').addEventListener('change', renderArticles);
+        document.getElementById('companyFilter').addEventListener('change', renderArticles);
+        document.getElementById('statusFilter').addEventListener('change', renderArticles);
+
+        // Public checkbox toggle
+        document.getElementById('articlePublic').addEventListener('change', function() {
+            document.getElementById('companyCheckboxes').style.display = this.checked ? 'none' : 'block';
+        });
+
+        // Tag input functionality
+        const tagInput = document.getElementById('tagInput');
+        const tagContainer = document.getElementById('tagInputContainer');
+        const tagSuggestions = document.getElementById('tagSuggestions');
+
+        tagInput.addEventListener('input', function() {
+            const value = this.value.toLowerCase().trim();
+            if (value.length < 1) {
+                tagSuggestions.classList.remove('show');
+                return;
+            }
+
+            const matches = allTags.filter(t =>
+                t.name.includes(value) && !selectedTags.includes(t.name)
+            );
+
+            if (matches.length > 0) {
+                tagSuggestions.innerHTML = matches.map(t => `
+                    <div class="tag-suggestion" onclick="addTag('${t.name}', '${t.color}')">
+                        <span class="tag" style="background: ${t.color}">${t.name}</span>
+                    </div>
+                `).join('');
+                tagSuggestions.classList.add('show');
+            } else {
+                tagSuggestions.innerHTML = `
+                    <div class="tag-suggestion" onclick="addNewTag('${escapeHtml(value)}')">
+                        <span>Create new tag: <strong>${escapeHtml(value)}</strong></span>
+                    </div>
+                `;
+                tagSuggestions.classList.add('show');
+            }
+        });
+
+        tagInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ',') {
+                e.preventDefault();
+                const value = this.value.trim().toLowerCase().replace(/\s+/g, '-');
+                if (value && !selectedTags.includes(value)) {
+                    const existingTag = allTags.find(t => t.name === value);
+                    addTag(value, existingTag ? existingTag.color : '#6b7280');
+                }
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!tagContainer.contains(e.target)) {
+                tagSuggestions.classList.remove('show');
+            }
+        });
+
+        function addTag(name, color) {
+            if (selectedTags.includes(name)) return;
+            selectedTags.push(name);
+            renderSelectedTags();
+            tagInput.value = '';
+            tagSuggestions.classList.remove('show');
+        }
+
+        function addNewTag(name) {
+            const tagName = name.toLowerCase().replace(/\s+/g, '-');
+            addTag(tagName, '#6b7280');
+        }
+
+        function removeTag(name) {
+            selectedTags = selectedTags.filter(t => t !== name);
+            renderSelectedTags();
+        }
+
+        function renderSelectedTags() {
+            const existingTags = tagContainer.querySelectorAll('.tag');
+            existingTags.forEach(t => t.remove());
+
+            selectedTags.forEach(name => {
+                const existingTag = allTags.find(t => t.name === name);
+                const color = existingTag ? existingTag.color : '#6b7280';
+                const tagEl = document.createElement('span');
+                tagEl.className = 'tag';
+                tagEl.style.background = color;
+                tagEl.innerHTML = `${escapeHtml(name)} <span class="tag-remove" onclick="removeTag('${name}')">&times;</span>`;
+                tagContainer.insertBefore(tagEl, tagInput);
+            });
+        }
+
+        function showArticleModal(articleId = null) {
+            editingArticleId = articleId;
+            selectedTags = [];
+            const modal = document.getElementById('articleModal');
+            const form = document.getElementById('articleForm');
+            const title = document.getElementById('articleModalTitle');
+            const submitBtn = document.getElementById('articleSubmitBtn');
+
+            form.reset();
+            document.getElementById('articleModalAlert').innerHTML = '';
+            document.getElementById('companyCheckboxes').style.display = 'none';
+            document.getElementById('articlePublic').checked = true;
+            renderSelectedTags();
+
+            if (articleId) {
+                title.textContent = 'Edit Article';
+                submitBtn.textContent = 'Save Changes';
+                const article = allArticles.find(a => a.id === articleId);
+                if (article) {
+                    document.getElementById('articleTitle').value = article.title;
+                    document.getElementById('articleContent').value = article.content;
+                    document.getElementById('articleCategory').value = article.category_id || '';
+                    document.getElementById('articleStatus').value = article.is_published.toString();
+                    document.getElementById('articlePublic').checked = article.is_public;
+
+                    if (article.tags) {
+                        selectedTags = [...article.tags];
+                        renderSelectedTags();
+                    }
+
+                    if (!article.is_public) {
+                        document.getElementById('companyCheckboxes').style.display = 'block';
+                        document.querySelectorAll('#companyCheckboxes input[type="checkbox"]').forEach(cb => {
+                            cb.checked = article.company_ids && article.company_ids.includes(parseInt(cb.value));
+                        });
+                    }
+                }
+            } else {
+                title.textContent = 'New Article';
+                submitBtn.textContent = 'Create Article';
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function editArticle(id) {
+            showArticleModal(id);
+        }
+
+        document.getElementById('articleForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const alertContainer = document.getElementById('articleModalAlert');
+
+            const isPublic = document.getElementById('articlePublic').checked;
+            let companyIds = [];
+
+            if (!isPublic) {
+                companyIds = Array.from(document.querySelectorAll('#companyCheckboxes input[type="checkbox"]:checked'))
+                    .map(cb => parseInt(cb.value));
+
+                if (companyIds.length === 0) {
+                    alertContainer.innerHTML = '<div class="alert alert-error">Please select at least one company or make the article public</div>';
+                    return;
+                }
+            }
+
+            const articleData = {
+                title: document.getElementById('articleTitle').value.trim(),
+                content: document.getElementById('articleContent').value.trim(),
+                category_id: document.getElementById('articleCategory').value ? parseInt(document.getElementById('articleCategory').value) : null,
+                tags: selectedTags,
+                is_published: document.getElementById('articleStatus').value === 'true',
+                is_public: isPublic,
+                company_ids: companyIds
+            };
+
+            try {
+                let response;
+                if (editingArticleId) {
+                    response = await api.updateKBArticle(editingArticleId, articleData);
+                } else {
+                    response = await api.createKBArticle(articleData);
+                }
+
+                if (response.success) {
+                    alertContainer.innerHTML = '<div class="alert alert-success">Article saved!</div>';
+                    setTimeout(() => {
+                        hideModal('articleModal');
+                        loadData();
+                    }, 1000);
+                } else {
+                    alertContainer.innerHTML = `<div class="alert alert-error">${response.message}</div>`;
+                }
+            } catch (error) {
+                alertContainer.innerHTML = '<div class="alert alert-error">Error saving article</div>';
+            }
+        });
+
+        function showCategoryModal() {
+            document.getElementById('categoryModal').classList.remove('hidden');
+            document.getElementById('categoryModalAlert').innerHTML = '';
+            renderCategoryTree();
+        }
+
+        function renderCategoryTree() {
+            const container = document.getElementById('categoryTree');
+            const hierarchy = buildCategoryHierarchy();
+
+            if (hierarchy.length === 0) {
+                container.innerHTML = '<p class="text-muted">No categories yet</p>';
+                return;
+            }
+
+            container.innerHTML = `<ul class="category-tree">${hierarchy.map(parent => `
+                <li class="category-tree-item">
+                    <div class="category-tree-parent">
+                        ${escapeHtml(parent.name)}
+                        <span class="text-sm text-muted">${parent.description || ''}</span>
+                    </div>
+                    ${parent.children.length > 0 ? `
+                        <ul class="category-tree-children">
+                            ${parent.children.map(child => `
+                                <li class="category-tree-child">
+                                    └ ${escapeHtml(child.name)}
+                                    <span class="text-muted">${child.description || ''}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    ` : ''}
+                </li>
+            `).join('')}</ul>`;
+        }
+
+        document.getElementById('addCategoryForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const alertContainer = document.getElementById('categoryModalAlert');
+
+            const categoryData = {
+                name: document.getElementById('newCategoryName').value.trim(),
+                description: document.getElementById('newCategoryDesc').value.trim(),
+                parent_id: document.getElementById('newCategoryParent').value ? parseInt(document.getElementById('newCategoryParent').value) : null
+            };
+
+            try {
+                const response = await api.createKBCategory(categoryData);
+                if (response.success) {
+                    alertContainer.innerHTML = '<div class="alert alert-success">Category added!</div>';
+                    document.getElementById('addCategoryForm').reset();
+                    allCategories.push(response.data);
+                    populateCategoryFilters();
+                    renderCategoryTree();
+                    setTimeout(() => alertContainer.innerHTML = '', 2000);
+                } else {
+                    alertContainer.innerHTML = `<div class="alert alert-error">${response.message}</div>`;
+                }
+            } catch (error) {
+                alertContainer.innerHTML = '<div class="alert alert-error">Error adding category</div>';
+            }
+        });
+
+        function showTagModal() {
+            document.getElementById('tagModal').classList.remove('hidden');
+            document.getElementById('tagModalAlert').innerHTML = '';
+            renderTagList();
+        }
+
+        function renderTagList() {
+            const container = document.getElementById('tagList');
+
+            if (allTags.length === 0) {
+                container.innerHTML = '<p class="text-muted">No tags yet</p>';
+                return;
+            }
+
+            container.innerHTML = `<div class="tag-list">${allTags.map(tag => `
+                <div class="tag-item" style="background: ${tag.color}">
+                    ${escapeHtml(tag.name)}
+                    <span class="tag-count">${tag.usage_count}</span>
+                </div>
+            `).join('')}</div>`;
+        }
+
+        document.getElementById('addTagForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const alertContainer = document.getElementById('tagModalAlert');
+
+            const tagData = {
+                name: document.getElementById('newTagName').value.trim(),
+                color: document.getElementById('newTagColor').value
+            };
+
+            try {
+                const response = await api.createKBTag(tagData);
+                if (response.success) {
+                    alertContainer.innerHTML = '<div class="alert alert-success">Tag added!</div>';
+                    document.getElementById('addTagForm').reset();
+                    allTags.push({ ...response.data, usage_count: 0 });
+                    populateTagFilter();
+                    renderTagList();
+                    document.getElementById('totalTags').textContent = allTags.length;
+                    setTimeout(() => alertContainer.innerHTML = '', 2000);
+                } else {
+                    alertContainer.innerHTML = `<div class="alert alert-error">${response.message}</div>`;
+                }
+            } catch (error) {
+                alertContainer.innerHTML = '<div class="alert alert-error">Error adding tag</div>';
+            }
+        });
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        function logout() {
+            api.clearSession();
+            window.location.href = 'login.html';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

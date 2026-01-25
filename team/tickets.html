@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Tickets - Team Portal - Scottship Solutions</title>
+    <link rel="stylesheet" href="../shared/css/common.css">
+    <link rel="stylesheet" href="css/team.css">
+    <style>
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+        .sortable:hover {
+            color: var(--primary-blue);
+        }
+        .sortable::after {
+            content: '';
+            display: inline-block;
+            width: 0;
+            height: 0;
+            margin-left: 6px;
+            vertical-align: middle;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid var(--gray-400);
+            opacity: 0.5;
+        }
+        .sortable.asc::after {
+            border-top: none;
+            border-bottom: 4px solid var(--primary-blue);
+            opacity: 1;
+        }
+        .sortable.desc::after {
+            border-top: 4px solid var(--primary-blue);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="team-layout">
+        <aside class="team-sidebar">
+            <div class="sidebar-header">
+                <a href="dashboard.html" class="sidebar-logo">Scottship Solutions</a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        Dashboard
+                    </a>
+                    <a href="tickets.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        All Tickets
+                    </a>
+                    <a href="knowledge-base.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                        Knowledge Base
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Management</div>
+                    <a href="customers.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                        </svg>
+                        Customers
+                    </a>
+                    <a href="reports.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="20" x2="18" y2="10"></line>
+                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="14"></line>
+                        </svg>
+                        Reports
+                    </a>
+                    <a href="settings.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="sidebarAvatar">--</div>
+                    <div class="user-details">
+                        <div class="user-name" id="sidebarName">Loading...</div>
+                        <div class="user-role" id="sidebarRole">Team Member</div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm mt-md" style="width: 100%;" onclick="logout()">Sign Out</button>
+            </div>
+        </aside>
+
+        <main class="team-main">
+            <header class="team-header">
+                <div class="team-header-left">
+                    <h1>All Tickets</h1>
+                    <div class="search-box">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" placeholder="Search tickets..." id="searchInput">
+                    </div>
+                </div>
+                <div class="team-header-right">
+                    <button class="btn btn-primary">+ Create Ticket</button>
+                </div>
+            </header>
+
+            <div class="team-content">
+                <div class="tickets-card">
+                    <div class="tickets-card-header">
+                        <div class="tickets-filters">
+                            <select class="filter-select" id="statusFilter">
+                                <option value="">All Status</option>
+                                <option value="open">Open</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="waiting_on_customer">Waiting on Customer</option>
+                                <option value="resolved">Resolved</option>
+                                <option value="closed">Closed</option>
+                            </select>
+                            <select class="filter-select" id="priorityFilter">
+                                <option value="">All Priority</option>
+                                <option value="critical">Critical</option>
+                                <option value="high">High</option>
+                                <option value="medium">Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+                            <select class="filter-select" id="assigneeFilter">
+                                <option value="">All Assignees</option>
+                                <option value="unassigned">Unassigned</option>
+                                <option value="me">Assigned to Me</option>
+                            </select>
+                        </div>
+                        <span class="text-muted text-sm" id="ticketCount">-- tickets</span>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="ticket-table">
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-sort="ticket_number">Ticket</th>
+                                    <th class="sortable" data-sort="subject">Subject</th>
+                                    <th class="sortable" data-sort="company_name">Company</th>
+                                    <th class="sortable" data-sort="status">Status</th>
+                                    <th class="sortable" data-sort="priority">Priority</th>
+                                    <th class="sortable" data-sort="assigned_to_name">Assigned To</th>
+                                    <th class="sortable desc" data-sort="created_at">Created</th>
+                                    <th class="sortable" data-sort="updated_at">Updated</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ticketTableBody">
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted">
+                                        <span class="spinner"></span> Loading tickets...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../shared/js/api.js"></script>
+    <script src="js/team.js"></script>
+    <script>
+        const session = requireAuth('team');
+        if (!session) {
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('sidebarName').textContent = session.user.name;
+            document.getElementById('sidebarAvatar').textContent = getInitials(session.user.name);
+            document.getElementById('sidebarRole').textContent = session.user.role === 'admin' ? 'Administrator' : 'Technician';
+            loadTickets();
+        }
+
+        let allTickets = [];
+        let currentSort = { field: 'created_at', dir: 'desc' };
+
+        async function loadTickets() {
+            try {
+                const response = await api.getTickets();
+                if (response.success) {
+                    allTickets = response.data;
+                    document.getElementById('ticketCount').textContent = `${allTickets.length} tickets`;
+                    applyFiltersAndSort();
+                }
+            } catch (error) {
+                console.error('Error loading tickets:', error);
+            }
+        }
+
+        function renderTickets(tickets) {
+            const tbody = document.getElementById('ticketTableBody');
+
+            if (tickets.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center text-muted">
+                            No tickets found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = tickets.map(ticket => `
+                <tr onclick="window.location.href='ticket.html?id=${ticket.id}'">
+                    <td><span class="ticket-id-link">${ticket.ticket_number}</span></td>
+                    <td><span class="ticket-subject">${escapeHtml(ticket.subject)}</span></td>
+                    <td>
+                        <div class="customer-info">
+                            <div class="customer-avatar">${getInitials(ticket.company_name || ticket.customer_name)}</div>
+                            ${escapeHtml(ticket.company_name || ticket.customer_name)}
+                        </div>
+                    </td>
+                    <td><span class="badge ${getStatusClass(ticket.status)}">${getStatusLabel(ticket.status)}</span></td>
+                    <td>
+                        <span class="priority-dot ${ticket.priority}"></span>
+                        ${getPriorityLabel(ticket.priority)}
+                    </td>
+                    <td>
+                        ${ticket.assigned_to ? `
+                            <div class="customer-info">
+                                <div class="assignee-avatar">${getInitials(ticket.assigned_to_name)}</div>
+                                ${escapeHtml(ticket.assigned_to_name)}
+                            </div>
+                        ` : '<span class="unassigned">Unassigned</span>'}
+                    </td>
+                    <td>${formatRelativeTime(ticket.created_at)}</td>
+                    <td>${formatRelativeTime(ticket.updated_at)}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Sorting
+        const priorityOrder = { 'critical': 0, 'high': 1, 'medium': 2, 'low': 3 };
+        const statusOrder = { 'open': 0, 'in_progress': 1, 'waiting_on_customer': 2, 'resolved': 3, 'closed': 4 };
+
+        function sortTickets(tickets, field, dir) {
+            return [...tickets].sort((a, b) => {
+                let aVal = a[field];
+                let bVal = b[field];
+
+                // Handle null/undefined
+                if (aVal == null) aVal = '';
+                if (bVal == null) bVal = '';
+
+                // Special sorting for priority
+                if (field === 'priority') {
+                    aVal = priorityOrder[aVal] ?? 99;
+                    bVal = priorityOrder[bVal] ?? 99;
+                }
+
+                // Special sorting for status
+                if (field === 'status') {
+                    aVal = statusOrder[aVal] ?? 99;
+                    bVal = statusOrder[bVal] ?? 99;
+                }
+
+                // Date sorting
+                if (field === 'created_at' || field === 'updated_at') {
+                    aVal = new Date(aVal).getTime();
+                    bVal = new Date(bVal).getTime();
+                }
+
+                // String comparison
+                if (typeof aVal === 'string') {
+                    aVal = aVal.toLowerCase();
+                    bVal = bVal.toLowerCase();
+                }
+
+                if (aVal < bVal) return dir === 'asc' ? -1 : 1;
+                if (aVal > bVal) return dir === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        document.querySelectorAll('.sortable').forEach(th => {
+            th.addEventListener('click', function() {
+                const field = this.dataset.sort;
+
+                // Toggle direction
+                if (currentSort.field === field) {
+                    currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+                } else {
+                    currentSort.field = field;
+                    currentSort.dir = 'asc';
+                }
+
+                // Update header classes
+                document.querySelectorAll('.sortable').forEach(h => h.classList.remove('asc', 'desc'));
+                this.classList.add(currentSort.dir);
+
+                applyFiltersAndSort();
+            });
+        });
+
+        // Filters
+        document.getElementById('statusFilter').addEventListener('change', applyFiltersAndSort);
+        document.getElementById('priorityFilter').addEventListener('change', applyFiltersAndSort);
+        document.getElementById('assigneeFilter').addEventListener('change', applyFiltersAndSort);
+        document.getElementById('searchInput').addEventListener('input', applyFiltersAndSort);
+
+        function applyFiltersAndSort() {
+            const status = document.getElementById('statusFilter').value;
+            const priority = document.getElementById('priorityFilter').value;
+            const assignee = document.getElementById('assigneeFilter').value;
+            const query = document.getElementById('searchInput').value.toLowerCase();
+
+            let filtered = allTickets;
+
+            // Apply filters
+            if (status) {
+                filtered = filtered.filter(t => t.status === status);
+            }
+            if (priority) {
+                filtered = filtered.filter(t => t.priority === priority);
+            }
+            if (assignee === 'unassigned') {
+                filtered = filtered.filter(t => !t.assigned_to);
+            } else if (assignee === 'me') {
+                filtered = filtered.filter(t => t.assigned_to === session.user.id);
+            }
+            if (query) {
+                filtered = filtered.filter(t =>
+                    t.subject.toLowerCase().includes(query) ||
+                    t.ticket_number.toLowerCase().includes(query) ||
+                    (t.company_name && t.company_name.toLowerCase().includes(query)) ||
+                    (t.customer_name && t.customer_name.toLowerCase().includes(query))
+                );
+            }
+
+            // Apply sort
+            filtered = sortTickets(filtered, currentSort.field, currentSort.dir);
+
+            document.getElementById('ticketCount').textContent = `${filtered.length} tickets`;
+            renderTickets(filtered);
+        }
+
+        function logout() {
+            api.clearSession();
+            window.location.href = 'login.html';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

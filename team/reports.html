@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Team Portal - Scottship Solutions</title>
+    <link rel="stylesheet" href="../shared/css/common.css">
+    <link rel="stylesheet" href="css/team.css">
+    <style>
+        .reports-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+        }
+        .date-filter {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+        .date-filter-btn {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 1px solid var(--gray-300);
+            background: var(--white);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .date-filter-btn:hover {
+            background: var(--gray-50);
+        }
+        .date-filter-btn.active {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+        .kpi-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            padding: var(--spacing-lg);
+        }
+        .kpi-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--spacing-md);
+        }
+        .kpi-card-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: white;
+        }
+        .kpi-card-icon.blue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .kpi-card-icon.green { background: linear-gradient(135deg, #10b981, #059669); }
+        .kpi-card-icon.orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .kpi-card-icon.purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .kpi-card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            line-height: 1;
+            margin-bottom: var(--spacing-xs);
+        }
+        .kpi-card-label {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+        .kpi-card-trend {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-sm);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .kpi-card-trend.up { color: #10b981; }
+        .kpi-card-trend.down { color: #ef4444; }
+        .kpi-card-trend.neutral { color: var(--gray-500); }
+
+        /* Chart Grid */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+        }
+        .chart-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            padding: var(--spacing-lg);
+        }
+        .chart-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        /* Donut Chart */
+        .donut-chart-container {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xl);
+        }
+        .donut-chart {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            flex-shrink: 0;
+        }
+        .donut-chart svg {
+            transform: rotate(-90deg);
+        }
+        .donut-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        .donut-center-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+        .donut-center-label {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+        .donut-legend {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        .donut-legend-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        .donut-legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+        .donut-legend-label {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            flex: 1;
+        }
+        .donut-legend-value {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        /* Timeline Chart */
+        .timeline-chart {
+            height: 200px;
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            padding-top: var(--spacing-md);
+        }
+        .timeline-bar-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+        .timeline-bar {
+            width: 100%;
+            max-width: 40px;
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+        .timeline-bar:hover {
+            opacity: 0.8;
+        }
+        .timeline-bar-tooltip {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gray-900);
+            color: white;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            white-space: nowrap;
+            margin-bottom: 4px;
+        }
+        .timeline-bar:hover .timeline-bar-tooltip {
+            display: block;
+        }
+        .timeline-label {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+            text-align: center;
+        }
+
+        /* Bar Chart */
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        .bar-label {
+            width: 100px;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .bar-container {
+            flex: 1;
+            height: 28px;
+            background: var(--gray-100);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%;
+            border-radius: var(--radius-sm);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: var(--spacing-sm);
+        }
+        .bar-fill-text {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+        }
+        .bar-value {
+            width: 50px;
+            text-align: right;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        /* Second Row Grid */
+        .chart-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        /* Activity List */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+        }
+        .activity-item {
+            display: flex;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .activity-icon svg {
+            width: 16px;
+            height: 16px;
+        }
+        .activity-icon.created { background: #dbeafe; color: #2563eb; }
+        .activity-icon.resolved { background: #d1fae5; color: #059669; }
+        .activity-icon.assigned { background: #f3e8ff; color: #7c3aed; }
+        .activity-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .activity-text {
+            font-size: 0.875rem;
+            color: var(--gray-700);
+            margin-bottom: 2px;
+        }
+        .activity-time {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        /* Category Stats */
+        .category-stat {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-md);
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-sm);
+        }
+        .category-stat:last-child {
+            margin-bottom: 0;
+        }
+        .category-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .category-count {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        .category-badge {
+            background: var(--primary-blue);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+            .chart-grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+            .reports-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--spacing-md);
+            }
+            .donut-chart-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="team-layout">
+        <aside class="team-sidebar">
+            <div class="sidebar-header">
+                <a href="dashboard.html" class="sidebar-logo">Scottship Solutions</a>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        Dashboard
+                    </a>
+                    <a href="tickets.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path></svg>
+                        All Tickets
+                    </a>
+                    <a href="knowledge-base.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                        Knowledge Base
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Management</div>
+                    <a href="customers.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                        Customers
+                    </a>
+                    <a href="reports.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        Reports
+                    </a>
+                    <a href="settings.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle></svg>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="sidebarAvatar">--</div>
+                    <div class="user-details">
+                        <div class="user-name" id="sidebarName">Loading...</div>
+                        <div class="user-role" id="sidebarRole">Team Member</div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm mt-md" style="width: 100%;" onclick="logout()">Sign Out</button>
+            </div>
+        </aside>
+
+        <main class="team-main">
+            <header class="team-header">
+                <div class="team-header-left">
+                    <h1>Reports & Analytics</h1>
+                </div>
+            </header>
+
+            <div class="team-content">
+                <!-- Filters -->
+                <div class="reports-header">
+                    <div style="display: flex; gap: var(--spacing-lg); align-items: center; flex-wrap: wrap;">
+                        <div class="date-filter">
+                            <button class="date-filter-btn" data-range="7">Last 7 Days</button>
+                            <button class="date-filter-btn active" data-range="30">Last 30 Days</button>
+                            <button class="date-filter-btn" data-range="90">Last 90 Days</button>
+                            <button class="date-filter-btn" data-range="all">All Time</button>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                            <label style="font-size: 0.875rem; color: var(--gray-600);">Company:</label>
+                            <select id="companyFilter" class="filter-select" style="min-width: 180px;">
+                                <option value="">All Companies</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="exportReport()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Export CSV
+                    </button>
+                </div>
+
+                <!-- KPI Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-card-icon blue">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path></svg>
+                        </div>
+                        <div class="kpi-card-value" id="kpiTotal">-</div>
+                        <div class="kpi-card-label">Total Tickets</div>
+                        <div class="kpi-card-trend neutral" id="kpiTotalTrend">
+                            <span>-</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-card-icon green">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </div>
+                        <div class="kpi-card-value" id="kpiResolved">-</div>
+                        <div class="kpi-card-label">Resolved</div>
+                        <div class="kpi-card-trend up" id="kpiResolvedTrend">
+                            <span>-</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-card-icon orange">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        </div>
+                        <div class="kpi-card-value" id="kpiAvgTime">-</div>
+                        <div class="kpi-card-label">Avg. Resolution Time</div>
+                        <div class="kpi-card-trend neutral" id="kpiAvgTimeTrend">
+                            <span>Based on resolved tickets</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-card-icon purple">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                        </div>
+                        <div class="kpi-card-value" id="kpiCustomers">-</div>
+                        <div class="kpi-card-label">Active Customers</div>
+                        <div class="kpi-card-trend neutral" id="kpiCustomersTrend">
+                            <span>With tickets in period</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- First Row: Timeline + Status Donut -->
+                <div class="chart-grid">
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Ticket Volume Over Time</h3>
+                        </div>
+                        <div class="timeline-chart" id="timelineChart">
+                            <div class="empty-state"><span class="spinner"></span></div>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Status Breakdown</h3>
+                        </div>
+                        <div class="donut-chart-container" id="statusDonut">
+                            <div class="empty-state"><span class="spinner"></span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Second Row: Priority, Assignee, Categories -->
+                <div class="chart-grid-2">
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">By Priority</h3>
+                        </div>
+                        <div class="bar-chart" id="priorityChart">
+                            <div class="empty-state"><span class="spinner"></span></div>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">By Team Member</h3>
+                        </div>
+                        <div class="bar-chart" id="assigneeChart">
+                            <div class="empty-state"><span class="spinner"></span></div>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">By Category</h3>
+                        </div>
+                        <div id="categoryChart">
+                            <div class="empty-state"><span class="spinner"></span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Third Row: Recent Activity + Response Times -->
+                <div class="chart-grid">
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Recent Activity</h3>
+                        </div>
+                        <div class="activity-list" id="activityList">
+                            <div class="empty-state"><span class="spinner"></span></div>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-title">Performance Metrics</h3>
+                        </div>
+                        <div id="performanceMetrics">
+                            <div class="empty-state"><span class="spinner"></span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../shared/js/api.js"></script>
+    <script>
+        const session = requireAuth('team');
+        let allTickets = [];
+        let allUsers = [];
+        let allCategories = [];
+        let allCompanies = [];
+        let currentRange = 30;
+        let currentCompanyId = null;
+
+        if (session) {
+            document.getElementById('sidebarName').textContent = session.user.name;
+            document.getElementById('sidebarAvatar').textContent = getInitials(session.user.name);
+            document.getElementById('sidebarRole').textContent = session.user.role === 'admin' ? 'Administrator' : 'Technician';
+            loadReports();
+        }
+
+        // Date filter buttons
+        document.querySelectorAll('.date-filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.date-filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentRange = this.dataset.range === 'all' ? null : parseInt(this.dataset.range);
+                renderReports();
+            });
+        });
+
+        // Company filter
+        document.getElementById('companyFilter').addEventListener('change', function() {
+            currentCompanyId = this.value ? parseInt(this.value) : null;
+            renderReports();
+        });
+
+        async function loadReports() {
+            try {
+                const [ticketsRes, usersRes, categoriesRes, companiesRes] = await Promise.all([
+                    api.getTickets(),
+                    api.getUsers(),
+                    api.getCategories(),
+                    api.getCompanies()
+                ]);
+
+                if (ticketsRes.success) allTickets = ticketsRes.data;
+                if (usersRes.success) allUsers = usersRes.data;
+                if (categoriesRes.success) allCategories = categoriesRes.data;
+                if (companiesRes.success) {
+                    allCompanies = companiesRes.data;
+                    populateCompanyFilter();
+                }
+
+                renderReports();
+            } catch (error) {
+                console.error('Error loading reports:', error);
+            }
+        }
+
+        function populateCompanyFilter() {
+            const select = document.getElementById('companyFilter');
+            select.innerHTML = '<option value="">All Companies</option>' +
+                allCompanies.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
+        }
+
+        function filterTicketsByRange(tickets) {
+            let filtered = tickets;
+
+            // Filter by date range
+            if (currentRange) {
+                const cutoff = new Date();
+                cutoff.setDate(cutoff.getDate() - currentRange);
+                filtered = filtered.filter(t => new Date(t.created_at) >= cutoff);
+            }
+
+            // Filter by company
+            if (currentCompanyId) {
+                filtered = filtered.filter(t => t.company_id === currentCompanyId);
+            }
+
+            return filtered;
+        }
+
+        function renderReports() {
+            const tickets = filterTicketsByRange(allTickets);
+
+            renderKPIs(tickets);
+            renderTimelineChart(tickets);
+            renderStatusDonut(tickets);
+            renderPriorityChart(tickets);
+            renderAssigneeChart(tickets);
+            renderCategoryChart(tickets);
+            renderActivityList(tickets);
+            renderPerformanceMetrics(tickets);
+        }
+
+        function renderKPIs(tickets) {
+            const total = tickets.length;
+            const resolved = tickets.filter(t => ['resolved', 'closed'].includes(t.status)).length;
+            const customers = new Set(tickets.map(t => t.customer_id)).size;
+
+            document.getElementById('kpiTotal').textContent = total;
+            document.getElementById('kpiResolved').textContent = resolved;
+            document.getElementById('kpiCustomers').textContent = customers;
+
+            // Calculate avg resolution time
+            const resolvedTickets = tickets.filter(t => t.resolved_at);
+            if (resolvedTickets.length > 0) {
+                const avgHours = resolvedTickets.reduce((sum, t) => {
+                    const created = new Date(t.created_at);
+                    const resolved = new Date(t.resolved_at);
+                    return sum + (resolved - created) / (1000 * 60 * 60);
+                }, 0) / resolvedTickets.length;
+
+                if (avgHours < 24) {
+                    document.getElementById('kpiAvgTime').textContent = Math.round(avgHours) + 'h';
+                } else {
+                    document.getElementById('kpiAvgTime').textContent = Math.round(avgHours / 24) + 'd';
+                }
+            } else {
+                document.getElementById('kpiAvgTime').textContent = 'N/A';
+            }
+
+            // Trends
+            const resolutionRate = total > 0 ? Math.round((resolved / total) * 100) : 0;
+            document.getElementById('kpiResolvedTrend').innerHTML = `<span>${resolutionRate}% resolution rate</span>`;
+        }
+
+        function renderTimelineChart(tickets) {
+            const container = document.getElementById('timelineChart');
+            const days = currentRange || 30;
+            const data = [];
+
+            // Build daily counts
+            for (let i = days - 1; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                date.setHours(0, 0, 0, 0);
+                const nextDate = new Date(date);
+                nextDate.setDate(nextDate.getDate() + 1);
+
+                const created = tickets.filter(t => {
+                    const d = new Date(t.created_at);
+                    return d >= date && d < nextDate;
+                }).length;
+
+                const resolved = tickets.filter(t => {
+                    if (!t.resolved_at) return false;
+                    const d = new Date(t.resolved_at);
+                    return d >= date && d < nextDate;
+                }).length;
+
+                data.push({
+                    date,
+                    label: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                    created,
+                    resolved
+                });
+            }
+
+            const maxValue = Math.max(...data.map(d => Math.max(d.created, d.resolved)), 1);
+            const maxHeight = 160;
+
+            // Show every Nth label based on days
+            const labelInterval = days <= 7 ? 1 : days <= 30 ? 5 : 10;
+
+            container.innerHTML = data.map((d, i) => `
+                <div class="timeline-bar-group">
+                    <div class="timeline-bar" style="height: ${(d.created / maxValue) * maxHeight}px; background: #3b82f6;">
+                        <div class="timeline-bar-tooltip">${d.label}: ${d.created} created</div>
+                    </div>
+                    ${i % labelInterval === 0 ? `<div class="timeline-label">${d.label}</div>` : '<div class="timeline-label"></div>'}
+                </div>
+            `).join('');
+        }
+
+        function renderStatusDonut(tickets) {
+            const container = document.getElementById('statusDonut');
+            const total = tickets.length || 1;
+
+            const statusData = [
+                { label: 'Open', value: tickets.filter(t => t.status === 'open').length, color: '#f59e0b' },
+                { label: 'In Progress', value: tickets.filter(t => t.status === 'in_progress').length, color: '#3b82f6' },
+                { label: 'Waiting', value: tickets.filter(t => t.status === 'waiting_on_customer').length, color: '#8b5cf6' },
+                { label: 'Resolved', value: tickets.filter(t => t.status === 'resolved').length, color: '#10b981' },
+                { label: 'Closed', value: tickets.filter(t => t.status === 'closed').length, color: '#6b7280' }
+            ];
+
+            // Build SVG donut
+            const radius = 60;
+            const circumference = 2 * Math.PI * radius;
+            let offset = 0;
+
+            const segments = statusData.map(s => {
+                const percent = s.value / total;
+                const dashLength = percent * circumference;
+                const segment = `<circle cx="80" cy="80" r="${radius}" fill="none" stroke="${s.color}" stroke-width="20" stroke-dasharray="${dashLength} ${circumference}" stroke-dashoffset="${-offset}" />`;
+                offset += dashLength;
+                return segment;
+            }).join('');
+
+            const activeTickets = tickets.filter(t => !['resolved', 'closed'].includes(t.status)).length;
+
+            container.innerHTML = `
+                <div class="donut-chart">
+                    <svg width="160" height="160" viewBox="0 0 160 160">
+                        ${segments}
+                    </svg>
+                    <div class="donut-center">
+                        <div class="donut-center-value">${activeTickets}</div>
+                        <div class="donut-center-label">Active</div>
+                    </div>
+                </div>
+                <div class="donut-legend">
+                    ${statusData.map(s => `
+                        <div class="donut-legend-item">
+                            <div class="donut-legend-color" style="background: ${s.color}"></div>
+                            <span class="donut-legend-label">${s.label}</span>
+                            <span class="donut-legend-value">${s.value}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function renderPriorityChart(tickets) {
+            const container = document.getElementById('priorityChart');
+            const data = [
+                { label: 'Critical', value: tickets.filter(t => t.priority === 'critical').length, color: '#ef4444' },
+                { label: 'High', value: tickets.filter(t => t.priority === 'high').length, color: '#f97316' },
+                { label: 'Medium', value: tickets.filter(t => t.priority === 'medium').length, color: '#f59e0b' },
+                { label: 'Low', value: tickets.filter(t => t.priority === 'low').length, color: '#10b981' }
+            ];
+
+            const max = Math.max(...data.map(d => d.value), 1);
+
+            container.innerHTML = data.map(d => `
+                <div class="bar-row">
+                    <span class="bar-label">${d.label}</span>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: ${(d.value / max) * 100}%; background: ${d.color};">
+                            ${d.value > 0 ? `<span class="bar-fill-text">${d.value}</span>` : ''}
+                        </div>
+                    </div>
+                    <span class="bar-value">${d.value}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderAssigneeChart(tickets) {
+            const container = document.getElementById('assigneeChart');
+
+            const data = [
+                { label: 'Unassigned', value: tickets.filter(t => !t.assigned_to).length, color: '#6b7280' },
+                ...allUsers.map((u, i) => ({
+                    label: u.name.split(' ')[0],
+                    value: tickets.filter(t => t.assigned_to === u.id).length,
+                    color: ['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b'][i % 4]
+                }))
+            ];
+
+            const max = Math.max(...data.map(d => d.value), 1);
+
+            container.innerHTML = data.map(d => `
+                <div class="bar-row">
+                    <span class="bar-label">${d.label}</span>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: ${(d.value / max) * 100}%; background: ${d.color};">
+                            ${d.value > 0 ? `<span class="bar-fill-text">${d.value}</span>` : ''}
+                        </div>
+                    </div>
+                    <span class="bar-value">${d.value}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderCategoryChart(tickets) {
+            const container = document.getElementById('categoryChart');
+
+            const data = allCategories.map(c => ({
+                name: c.name,
+                count: tickets.filter(t => t.category_id === c.id).length
+            })).sort((a, b) => b.count - a.count);
+
+            container.innerHTML = data.map(d => `
+                <div class="category-stat">
+                    <span class="category-name">${d.name}</span>
+                    <div class="category-count">
+                        <span class="category-badge">${d.count}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderActivityList(tickets) {
+            const container = document.getElementById('activityList');
+
+            // Sort by most recent
+            const recentTickets = [...tickets].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at)).slice(0, 8);
+
+            if (recentTickets.length === 0) {
+                container.innerHTML = '<div class="empty-state">No recent activity</div>';
+                return;
+            }
+
+            container.innerHTML = recentTickets.map(t => {
+                let icon, iconClass, action;
+                if (t.status === 'resolved' || t.status === 'closed') {
+                    icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                    iconClass = 'resolved';
+                    action = 'resolved';
+                } else if (t.assigned_to) {
+                    icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
+                    iconClass = 'assigned';
+                    action = 'assigned';
+                } else {
+                    icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+                    iconClass = 'created';
+                    action = 'created';
+                }
+
+                return `
+                    <div class="activity-item">
+                        <div class="activity-icon ${iconClass}">${icon}</div>
+                        <div class="activity-content">
+                            <div class="activity-text">
+                                <strong>${t.ticket_number}</strong> ${action} - ${escapeHtml(t.subject.substring(0, 40))}${t.subject.length > 40 ? '...' : ''}
+                            </div>
+                            <div class="activity-time">${formatRelativeTime(t.updated_at)}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderPerformanceMetrics(tickets) {
+            const container = document.getElementById('performanceMetrics');
+
+            const total = tickets.length;
+            const resolved = tickets.filter(t => ['resolved', 'closed'].includes(t.status)).length;
+            const open = tickets.filter(t => t.status === 'open').length;
+            const inProgress = tickets.filter(t => t.status === 'in_progress').length;
+            const highPriority = tickets.filter(t => ['high', 'critical'].includes(t.priority)).length;
+            const unassigned = tickets.filter(t => !t.assigned_to).length;
+
+            const resolutionRate = total > 0 ? Math.round((resolved / total) * 100) : 0;
+            const assignmentRate = total > 0 ? Math.round(((total - unassigned) / total) * 100) : 0;
+
+            container.innerHTML = `
+                <div class="category-stat">
+                    <span class="category-name">Resolution Rate</span>
+                    <span class="category-badge" style="background: ${resolutionRate >= 70 ? '#10b981' : resolutionRate >= 40 ? '#f59e0b' : '#ef4444'}">${resolutionRate}%</span>
+                </div>
+                <div class="category-stat">
+                    <span class="category-name">Assignment Rate</span>
+                    <span class="category-badge" style="background: ${assignmentRate >= 80 ? '#10b981' : assignmentRate >= 50 ? '#f59e0b' : '#ef4444'}">${assignmentRate}%</span>
+                </div>
+                <div class="category-stat">
+                    <span class="category-name">Open Tickets</span>
+                    <span class="category-badge" style="background: #f59e0b">${open}</span>
+                </div>
+                <div class="category-stat">
+                    <span class="category-name">In Progress</span>
+                    <span class="category-badge" style="background: #3b82f6">${inProgress}</span>
+                </div>
+                <div class="category-stat">
+                    <span class="category-name">High Priority</span>
+                    <span class="category-badge" style="background: ${highPriority > 5 ? '#ef4444' : '#f97316'}">${highPriority}</span>
+                </div>
+                <div class="category-stat">
+                    <span class="category-name">Unassigned</span>
+                    <span class="category-badge" style="background: ${unassigned > 3 ? '#ef4444' : '#6b7280'}">${unassigned}</span>
+                </div>
+            `;
+        }
+
+        function exportReport() {
+            const tickets = filterTicketsByRange(allTickets);
+
+            // Build CSV
+            const headers = ['Ticket #', 'Subject', 'Status', 'Priority', 'Customer', 'Assigned To', 'Created', 'Updated'];
+            const rows = tickets.map(t => [
+                t.ticket_number,
+                `"${t.subject.replace(/"/g, '""')}"`,
+                t.status,
+                t.priority,
+                t.customer_name || '',
+                t.assigned_to_name || 'Unassigned',
+                new Date(t.created_at).toLocaleDateString(),
+                new Date(t.updated_at).toLocaleDateString()
+            ]);
+
+            const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+
+            // Download
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `tickets-report-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function formatRelativeTime(dateStr) {
+            const date = new Date(dateStr);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffHours < 24) return `${diffHours}h ago`;
+            if (diffDays < 7) return `${diffDays}d ago`;
+            return date.toLocaleDateString();
+        }
+
+        function logout() {
+            api.clearSession();
+            window.location.href = 'login.html';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

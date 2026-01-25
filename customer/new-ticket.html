@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Ticket - Scottship Solutions Support</title>
+    <link rel="stylesheet" href="../shared/css/common.css">
+    <link rel="stylesheet" href="css/customer.css">
+</head>
+<body class="portal-layout">
+    <header class="portal-header">
+        <div class="portal-header-left">
+            <a href="dashboard.html" class="portal-logo">Scottship Solutions</a>
+            <nav class="portal-nav">
+                <a href="dashboard.html">My Tickets</a>
+                <a href="new-ticket.html" class="active">New Ticket</a>
+                <a href="knowledge-base.html">Help Center</a>
+                <a href="profile.html">Profile</a>
+            </nav>
+        </div>
+        <div class="portal-header-right">
+            <div class="user-menu">
+                <div class="user-avatar" id="userAvatar">--</div>
+                <span id="userName">Loading...</span>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="logout()">Sign Out</button>
+        </div>
+    </header>
+
+    <main class="portal-main">
+        <div class="page-header">
+            <h1 class="page-title">Create New Ticket</h1>
+        </div>
+
+        <div class="new-ticket-form card">
+            <div class="card-body">
+                <div id="alertContainer"></div>
+
+                <form id="newTicketForm">
+                    <div class="form-group">
+                        <label for="subject" class="form-label">Subject *</label>
+                        <input type="text" id="subject" name="subject" class="form-input" required
+                               placeholder="Brief description of your issue">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category" class="form-label">Category *</label>
+                        <select id="category" name="category" class="form-select" required>
+                            <option value="">Select a category</option>
+                            <option value="Network">Network</option>
+                            <option value="Hardware">Hardware</option>
+                            <option value="Software">Software</option>
+                            <option value="Security">Security</option>
+                            <option value="Email">Email</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="priority" class="form-label">Priority *</label>
+                        <select id="priority" name="priority" class="form-select" required>
+                            <option value="low">Low - General question or minor issue</option>
+                            <option value="medium" selected>Medium - Issue affecting work but with workaround</option>
+                            <option value="high">High - Significant impact, no workaround</option>
+                            <option value="critical">Critical - Complete work stoppage</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description" class="form-label">Description *</label>
+                        <textarea id="description" name="description" class="form-textarea" required rows="6"
+                                  placeholder="Please provide details about your issue. Include any error messages, steps to reproduce, and what you've already tried."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="attachments" class="form-label">Attachments (optional)</label>
+                        <input type="file" id="attachments" name="attachments" class="form-input" multiple
+                               accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt">
+                        <small class="text-muted text-sm mt-sm" style="display: block;">
+                            Max 10MB per file. Allowed: Images, PDF, Word, Excel, Text files
+                        </small>
+                    </div>
+
+                    <div class="flex gap-md" style="justify-content: flex-end;">
+                        <a href="dashboard.html" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <span class="btn-text">Submit Ticket</span>
+                            <span class="btn-loading hidden"><span class="spinner"></span></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-lg">
+            <div class="card-body">
+                <h3 class="mb-md">Need Immediate Help?</h3>
+                <p class="text-muted mb-md">
+                    You can also reach us by email. Simply send your issue to:
+                </p>
+                <p>
+                    <a href="mailto:support@scottshipsolutions.com" class="btn btn-secondary">
+                        support@scottshipsolutions.com
+                    </a>
+                </p>
+                <p class="text-sm text-muted mt-md">
+                    Emails will automatically create a ticket in our system.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <script src="../shared/js/api.js"></script>
+    <script src="js/customer.js"></script>
+    <script>
+        // Check auth and get user info
+        const session = requireAuth('customer');
+        if (session) {
+            document.getElementById('userName').textContent = session.user.contact_name;
+            document.getElementById('userAvatar').textContent = getInitials(session.user.contact_name);
+        }
+
+        document.getElementById('newTicketForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const alertContainer = document.getElementById('alertContainer');
+
+            const formData = {
+                subject: document.getElementById('subject').value.trim(),
+                category: document.getElementById('category').value,
+                priority: document.getElementById('priority').value,
+                description: document.getElementById('description').value.trim(),
+            };
+
+            // Validate
+            if (!formData.subject || !formData.category || !formData.description) {
+                showAlert(alertContainer, 'error', 'Please fill in all required fields.');
+                return;
+            }
+
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.querySelector('.btn-text').classList.add('hidden');
+            submitBtn.querySelector('.btn-loading').classList.remove('hidden');
+            alertContainer.innerHTML = '';
+
+            try {
+                // For demo, simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // Mock success
+                showAlert(alertContainer, 'success', 'Ticket created successfully! Redirecting...');
+
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+            } catch (error) {
+                showAlert(alertContainer, 'error', 'Unable to create ticket. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.querySelector('.btn-text').classList.remove('hidden');
+                submitBtn.querySelector('.btn-loading').classList.add('hidden');
+            }
+        });
+
+        function showAlert(container, type, message) {
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            container.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function logout() {
+            api.clearSession();
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

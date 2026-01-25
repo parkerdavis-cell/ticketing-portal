@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Portal - Scottship Solutions</title>
+    <link rel="stylesheet" href="shared/css/common.css">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hero {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--primary-blue) 100%);
+            padding: var(--spacing-xl);
+        }
+
+        .hero-content {
+            text-align: center;
+            color: var(--white);
+            max-width: 600px;
+        }
+
+        .hero-logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .hero-tagline {
+            font-size: 1.125rem;
+            opacity: 0.9;
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .portal-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .portal-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            text-align: center;
+            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .portal-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .portal-card-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--spacing-md);
+            font-size: 1.5rem;
+        }
+
+        .portal-card-icon svg {
+            width: 32px;
+            height: 32px;
+            fill: var(--white);
+        }
+
+        .portal-card h2 {
+            font-size: 1.25rem;
+            margin-bottom: var(--spacing-sm);
+            color: var(--gray-900);
+        }
+
+        .portal-card p {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        footer {
+            background: var(--gray-900);
+            color: var(--gray-400);
+            text-align: center;
+            padding: var(--spacing-lg);
+            font-size: 0.875rem;
+        }
+
+        footer a {
+            color: var(--gray-300);
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div class="hero-content">
+            <div class="hero-logo">Scottship Solutions</div>
+            <p class="hero-tagline">Welcome to our Support Portal. Get help with your IT needs or manage support requests.</p>
+
+            <div class="portal-cards">
+                <a href="customer/login.html" class="portal-card">
+                    <div class="portal-card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <h2>Customer Portal</h2>
+                    <p>Submit and track your support tickets</p>
+                </a>
+
+                <a href="team/login.html" class="portal-card">
+                    <div class="portal-card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 4.354a4 4 0 1 1 0 5.292M15 21H3v-1a6 6 0 0 1 12 0v1zm0 0h6v-1a6 6 0 0 0-9-5.197"></path>
+                        </svg>
+                    </div>
+                    <h2>Team Portal</h2>
+                    <p>Manage and respond to tickets</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Scottship Solutions. <a href="https://scottshipsolutions.com">scottshipsolutions.com</a></p>
+    </footer>
+</body>
+</html>

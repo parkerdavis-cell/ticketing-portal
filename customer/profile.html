@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Scottship Solutions Support</title>
+    <link rel="stylesheet" href="../shared/css/common.css">
+    <link rel="stylesheet" href="css/customer.css">
+</head>
+<body class="portal-layout">
+    <header class="portal-header">
+        <div class="portal-header-left">
+            <a href="dashboard.html" class="portal-logo">Scottship Solutions</a>
+            <nav class="portal-nav">
+                <a href="dashboard.html">My Tickets</a>
+                <a href="new-ticket.html">New Ticket</a>
+                <a href="knowledge-base.html">Help Center</a>
+                <a href="profile.html" class="active">Profile</a>
+            </nav>
+        </div>
+        <div class="portal-header-right">
+            <div class="user-menu">
+                <div class="user-avatar" id="userAvatar">--</div>
+                <span id="userName">Loading...</span>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="logout()">Sign Out</button>
+        </div>
+    </header>
+
+    <main class="portal-main">
+        <div class="page-header">
+            <h1 class="page-title">My Profile</h1>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-xl); max-width: 900px;">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Profile Information</h3>
+                </div>
+                <div class="card-body">
+                    <div id="profileAlert"></div>
+
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label for="companyName" class="form-label">Company Name</label>
+                            <input type="text" id="companyName" class="form-input" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactName" class="form-label">Contact Name</label>
+                            <input type="text" id="contactName" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" id="email" class="form-input" readonly>
+                            <small class="text-muted text-sm">Contact support to change your email address</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" id="phone" class="form-input" placeholder="(555) 123-4567">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Change Password</h3>
+                </div>
+                <div class="card-body">
+                    <div id="passwordAlert"></div>
+
+                    <form id="passwordForm">
+                        <div class="form-group">
+                            <label for="currentPassword" class="form-label">Current Password</label>
+                            <input type="password" id="currentPassword" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newPassword" class="form-label">New Password</label>
+                            <input type="password" id="newPassword" class="form-input" required minlength="8">
+                            <small class="text-muted text-sm">Minimum 8 characters</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                            <input type="password" id="confirmPassword" class="form-input" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Update Password</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-xl" style="max-width: 900px;">
+            <div class="card-header">
+                <h3>Account Information</h3>
+            </div>
+            <div class="card-body">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-lg);">
+                    <div>
+                        <div class="text-sm text-muted">Account Created</div>
+                        <div class="text-sm" id="accountCreated">--</div>
+                    </div>
+                    <div>
+                        <div class="text-sm text-muted">Total Tickets</div>
+                        <div class="text-sm" id="totalTickets">--</div>
+                    </div>
+                    <div>
+                        <div class="text-sm text-muted">Account Status</div>
+                        <div class="text-sm"><span class="badge badge-resolved">Active</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../shared/js/api.js"></script>
+    <script src="js/customer.js"></script>
+    <script>
+        // Check auth and get user info
+        const session = requireAuth('customer');
+        if (session) {
+            document.getElementById('userName').textContent = session.user.contact_name;
+            document.getElementById('userAvatar').textContent = getInitials(session.user.contact_name);
+            loadProfile();
+        }
+
+        async function loadProfile() {
+            // Load profile form data
+            document.getElementById('companyName').value = session.user.company_name || '';
+            document.getElementById('contactName').value = session.user.contact_name;
+            document.getElementById('email').value = session.user.email;
+            document.getElementById('phone').value = session.user.phone || '';
+
+            // Load account stats
+            try {
+                const statsResult = await api.getStats();
+                if (statsResult.success) {
+                    document.getElementById('totalTickets').textContent = statsResult.data.total || 0;
+                }
+            } catch (error) {
+                document.getElementById('totalTickets').textContent = '--';
+            }
+
+            // Account created date - this would come from the customer record
+            // For now we show a placeholder since the API doesn't return created_at
+            document.getElementById('accountCreated').textContent = 'Active Member';
+        }
+
+        // Profile form
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const alertContainer = document.getElementById('profileAlert');
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Saving...';
+
+            try {
+                const result = await api.updateMyProfile({
+                    name: document.getElementById('contactName').value,
+                    phone: document.getElementById('phone').value
+                });
+
+                if (result.success) {
+                    // Update session with new data
+                    session.user.contact_name = result.data.contact_name;
+                    session.user.phone = result.data.phone;
+                    localStorage.setItem('customerSession', JSON.stringify(session));
+
+                    // Update header
+                    document.getElementById('userName').textContent = session.user.contact_name;
+                    document.getElementById('userAvatar').textContent = getInitials(session.user.contact_name);
+
+                    alertContainer.innerHTML = `<div class="alert alert-success">Profile updated successfully!</div>`;
+                } else {
+                    alertContainer.innerHTML = `<div class="alert alert-error">${result.message || 'Error updating profile.'}</div>`;
+                }
+            } catch (error) {
+                alertContainer.innerHTML = `<div class="alert alert-error">Error updating profile. Please try again.</div>`;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Save Changes';
+            }
+        });
+
+        // Password form
+        document.getElementById('passwordForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const alertContainer = document.getElementById('passwordAlert');
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const submitBtn = this.querySelector('button[type="submit"]');
+
+            if (newPassword !== confirmPassword) {
+                alertContainer.innerHTML = `<div class="alert alert-error">Passwords do not match.</div>`;
+                return;
+            }
+
+            if (newPassword.length < 8) {
+                alertContainer.innerHTML = `<div class="alert alert-error">Password must be at least 8 characters.</div>`;
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Updating...';
+
+            try {
+                const result = await api.changeMyPassword(currentPassword, newPassword);
+
+                if (result.success) {
+                    alertContainer.innerHTML = `<div class="alert alert-success">Password updated successfully!</div>`;
+                    document.getElementById('passwordForm').reset();
+                } else {
+                    alertContainer.innerHTML = `<div class="alert alert-error">${result.message || 'Error updating password.'}</div>`;
+                }
+            } catch (error) {
+                alertContainer.innerHTML = `<div class="alert alert-error">Error updating password. Please try again.</div>`;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Update Password';
+            }
+        });
+
+        function logout() {
+            api.clearSession();
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

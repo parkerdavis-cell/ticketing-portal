@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tickets - Scottship Solutions Support</title>
+    <link rel="stylesheet" href="../shared/css/common.css">
+    <link rel="stylesheet" href="css/customer.css">
+</head>
+<body class="portal-layout">
+    <header class="portal-header">
+        <div class="portal-header-left">
+            <a href="dashboard.html" class="portal-logo">Scottship Solutions</a>
+            <nav class="portal-nav">
+                <a href="dashboard.html" class="active">My Tickets</a>
+                <a href="new-ticket.html">New Ticket</a>
+                <a href="knowledge-base.html">Help Center</a>
+                <a href="profile.html">Profile</a>
+            </nav>
+        </div>
+        <div class="portal-header-right">
+            <div class="user-menu">
+                <div class="user-avatar" id="userAvatar">--</div>
+                <span id="userName">Loading...</span>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="logout()">Sign Out</button>
+        </div>
+    </header>
+
+    <main class="portal-main">
+        <div class="page-header">
+            <h1 class="page-title">My Tickets</h1>
+            <a href="new-ticket.html" class="btn btn-primary">+ New Ticket</a>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-card-label">Open Tickets</div>
+                <div class="stat-card-value primary" id="statOpen">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-label">In Progress</div>
+                <div class="stat-card-value" id="statInProgress">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-label">Resolved</div>
+                <div class="stat-card-value" id="statResolved">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-label">Total Tickets</div>
+                <div class="stat-card-value" id="statTotal">-</div>
+            </div>
+        </div>
+
+        <div class="ticket-list">
+            <div class="ticket-list-header">
+                <h2 class="ticket-list-title">Recent Tickets</h2>
+                <div class="ticket-filters">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="open">Open</button>
+                    <button class="filter-btn" data-filter="in_progress">In Progress</button>
+                    <button class="filter-btn" data-filter="resolved">Resolved</button>
+                </div>
+            </div>
+
+            <div id="ticketListContent">
+                <div class="empty-state">
+                    <div class="spinner"></div>
+                    <p>Loading tickets...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../shared/js/api.js"></script>
+    <script src="js/customer.js"></script>
+    <script>
+        // Check auth and get user info
+        const session = requireAuth('customer');
+        if (session) {
+            document.getElementById('userName').textContent = session.user.contact_name;
+            document.getElementById('userAvatar').textContent = getInitials(session.user.contact_name);
+            loadDashboard();
+        }
+
+        let allTickets = [];
+
+        async function loadDashboard() {
+            try {
+                const response = await api.getTickets();
+                if (response.success) {
+                    allTickets = response.data;
+                    renderTickets(allTickets);
+                    updateStats(allTickets);
+                } else {
+                    throw new Error(response.message);
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                document.getElementById('ticketListContent').innerHTML = `
+                    <div class="empty-state">
+                        <p>Unable to load tickets. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function updateStats(tickets) {
+            const open = tickets.filter(t => t.status === 'open').length;
+            const inProgress = tickets.filter(t => t.status === 'in_progress').length;
+            const resolved = tickets.filter(t => t.status === 'resolved' || t.status === 'closed').length;
+
+            document.getElementById('statOpen').textContent = open;
+            document.getElementById('statInProgress').textContent = inProgress;
+            document.getElementById('statResolved').textContent = resolved;
+            document.getElementById('statTotal').textContent = tickets.length;
+        }
+
+        function renderTickets(tickets) {
+            const container = document.getElementById('ticketListContent');
+
+            if (tickets.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <h3>No tickets found</h3>
+                        <p>Create a new ticket to get support.</p>
+                        <a href="new-ticket.html" class="btn btn-primary mt-lg">Create Ticket</a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = tickets.map(ticket => `
+                <div class="ticket-row" onclick="window.location.href='ticket.html?id=${ticket.id}'">
+                    <div class="ticket-id">${ticket.ticket_number}</div>
+                    <div class="ticket-info">
+                        <div class="ticket-subject">${escapeHtml(ticket.subject)}</div>
+                        <div class="ticket-meta">
+                            <span class="priority-dot ${ticket.priority}"></span>
+                            ${getPriorityLabel(ticket.priority)} Priority
+                            ${ticket.category ? ` • ${ticket.category}` : ''}
+                        </div>
+                    </div>
+                    <span class="badge ${getStatusClass(ticket.status)}">${getStatusLabel(ticket.status)}</span>
+                    <div class="ticket-date">${formatRelativeTime(ticket.created_at)}</div>
+                </div>
+            `).join('');
+        }
+
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                const filter = this.dataset.filter;
+                let filtered = allTickets;
+
+                if (filter !== 'all') {
+                    filtered = allTickets.filter(t => t.status === filter);
+                }
+
+                renderTickets(filtered);
+            });
+        });
+
+        function logout() {
+            api.clearSession();
+            window.location.href = 'login.html';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+    </script>
+</body>
+</html>
