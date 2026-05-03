@@ -1742,6 +1742,149 @@ app.delete('/api/knowledge-base/:id', authenticateToken, (req, res) => {
     res.json({ success: true });
 });
 
+// ==================== EMAIL WEBHOOK (AWS SES via SNS) ====================
+
+// Handle SNS subscription confirmation and email notifications
+app.post('/api/email/webhook', express.text({ type: '*/*' }), async (req, res) => {
+    try {
+        const message = JSON.parse(req.body);
+
+        // Handle SNS subscription confirmation
+        if (message.Type === 'SubscriptionConfirmation') {
+            console.log('[EMAIL] SNS Subscription confirmation received');
+            console.log('[EMAIL] Confirm URL:', message.SubscribeURL);
+            // Auto-confirm by fetching the URL
+            const https = require('https');
+            https.get(message.SubscribeURL, (response) => {
+                console.log('[EMAIL] Subscription confirmed');
+            });
+            return res.status(200).send('OK');
+        }
+
+        // Handle actual email notification
+        if (message.Type === 'Notification') {
+            const notification = JSON.parse(message.Message);
+            const mail = notification.mail;
+            const content = notification.content; // Base64 encoded email
+
+            // Parse email headers
+            const from = mail.source;
+            const to = mail.destination[0];
+            const subject = mail.commonHeaders.subject || 'No Subject';
+            const fromAddress = mail.commonHeaders.from[0];
+
+            // Extract email body (simplified - in production use a proper email parser)
+            let body = '';
+            if (content) {
+                const decoded = Buffer.from(content, 'base64').toString('utf-8');
+                // Simple extraction - get text after headers
+                const parts = decoded.split('\r\n\r\n');
+                body = parts.slice(1).join('\r\n\r\n');
+                // Strip HTML if present
+                body = body.replace(/<[^>]*>/g, '').trim();
+            }
+
+            console.log(`[EMAIL] Received email from: ${fromAddress}, subject: ${subject}`);
+
+            const db = readDB();
+
+            // Check if this is a reply to an existing ticket (look for ticket number in subject)
+            const ticketMatch = subject.match(/\[TKT-(\d+)\]/);
+
+            if (ticketMatch) {
+                // This is a reply to an existing ticket
+                const ticketNumber = `TKT-${ticketMatch[1]}`;
+                const ticket = db.tickets.find(t => t.ticket_number === ticketNumber);
+
+                if (ticket) {
+                    // Find customer by email
+                    const customer = db.customers.find(c =>
+                        fromAddress.toLowerCase().includes(c.email.toLowerCase())
+                    );
+
+                    // Add reply to ticket
+                    const replyId = db.nextIds.reply++;
+                    db.replies.push({
+                        id: replyId,
+                        ticket_id: ticket.id,
+                        author_type: customer ? 'customer' : 'user',
+                        author_id: customer ? customer.id : null,
+                        content: body || 'Email reply (no content)',
+                        is_internal: false,
+                        source: 'email',
+                        created_at: new Date().toISOString()
+                    });
+
+                    // Update ticket status if it was waiting on customer
+                    if (ticket.status === 'waiting_on_customer') {
+                        ticket.status = 'in_progress';
+                    }
+                    ticket.updated_at = new Date().toISOString();
+
+                    writeDB(db);
+                    console.log(`[EMAIL] Added reply to ticket ${ticketNumber}`);
+                }
+            } else {
+                // This is a new ticket
+                // Try to find customer by email
+                const customer = db.customers.find(c =>
+                    fromAddress.toLowerCase().includes(c.email.toLowerCase())
+                );
+
+                const ticketId = db.nextIds.ticket++;
+                const ticketNumber = `TKT-${String(ticketId).padStart(6, '0')}`;
+
+                const ticket = {
+                    id: ticketId,
+                    ticket_number: ticketNumber,
+                    subject: subject,
+                    description: body || 'Email ticket (no content)',
+                    status: 'open',
+                    priority: 'medium',
+                    category_id: null,
+                    customer_id: customer ? customer.id : null,
+                    company_id: customer ? customer.company_id : null,
+                    assigned_to: null,
+                    source: 'email',
+                    source_email: fromAddress,
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
+                };
+
+                db.tickets.push(ticket);
+
+                // Add initial reply
+                const replyId = db.nextIds.reply++;
+                db.replies.push({
+                    id: replyId,
+                    ticket_id: ticketId,
+                    author_type: 'customer',
+                    author_id: customer ? customer.id : null,
+                    content: body || 'Email ticket (no content)',
+                    is_internal: false,
+                    source: 'email',
+                    created_at: new Date().toISOString()
+                });
+
+                writeDB(db);
+                console.log(`[EMAIL] Created new ticket ${ticketNumber} from ${fromAddress}`);
+
+                // If unknown sender, log for team review
+                if (!customer) {
+                    console.log(`[EMAIL] WARNING: Unknown sender ${fromAddress} - ticket needs customer assignment`);
+                }
+            }
+
+            return res.status(200).send('OK');
+        }
+
+        res.status(200).send('OK');
+    } catch (error) {
+        console.error('[EMAIL] Webhook error:', error);
+        res.status(500).send('Error processing email');
+    }
+});
+
 // ==================== STATS ====================
 
 app.get('/api/stats', authenticateToken, (req, res) => {
